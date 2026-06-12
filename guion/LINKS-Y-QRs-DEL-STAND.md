@@ -1,59 +1,70 @@
 # LINKS Y QRs DEL STAND
 
-> Completá este archivo cuando las piezas estén publicadas. Es la referencia rápida del día del evento.
+> **Publicado en GitHub Pages.** Todo funciona desde cualquier celular con datos.
 
-## Experiencias QR — URLs publicadas
+## Experiencias QR — URLs activas
 
 ```
-🎮 SHIP IT!
-URL:    ___________________________________________
-QR PNG: 03-QR-E-IMPRESOS/qr-ship.png
+🎮 SHIP IT!  (arcade · 90 seg)
+https://jcruzalmiron.github.io/stand-birria/demos/claude-quest/
 
-✍️ PEDILO BIEN
-URL:    ___________________________________________
-QR PNG: 03-QR-E-IMPRESOS/qr-pedi.png
+✍️ PEDILO BIEN  (wizard · 60 seg)
+https://jcruzalmiron.github.io/stand-birria/demos/pedilo-bien/
 
-🗺️ EL MAPA DE CLAUDE
-URL:    ___________________________________________
-QR PNG: 03-QR-E-IMPRESOS/qr-mapa.png
+🗺️ EL MAPA DE CLAUDE  (15 herramientas · 5 min)
+https://jcruzalmiron.github.io/stand-birria/demos/mapa-claude/
 ```
 
-## Cómo publicar (5 minutos)
+## Pieza secundaria también accesible
 
-**Opción A — Netlify Drop (recomendada):**
-1. Entrá a https://app.netlify.com/drop sin cuenta.
-2. Arrastrá la carpeta `stand-birria/`.
-3. Te da una URL tipo `https://stand-birria-xxxx.netlify.app/`.
-4. Las 3 experiencias quedan en:
-   - `.../demos/claude-quest/`
-   - `.../demos/pedilo-bien/`
-   - `.../demos/mapa-claude/`
+```
+💸 GASTOS DEL EVENTO  (pieza de mano)
+https://jcruzalmiron.github.io/stand-birria/demos/gastos-evento/
 
-**Opción B — Hotspot local (plan B sin internet):**
-- En la notebook: `python -m http.server 8080` dentro de `stand-birria/`.
-- Hotspot del celular del operador → IP local de la notebook.
-- Los QR apuntan a `http://<ip>:8080/demos/...`.
+📺 PANTALLA DEL TELE  (también se puede mostrar online)
+https://jcruzalmiron.github.io/stand-birria/pantalla-principal/
 
-## Material para el evento
+🎨 CARTEL DE INDUSTRIAS  (rotativo para tablet secundaria)
+https://jcruzalmiron.github.io/stand-birria/pantalla-principal/industrias.html
+
+📜 CARTA DE DEGUSTACIÓN  (para regenerar QR si hace falta)
+https://jcruzalmiron.github.io/stand-birria/pantalla-principal/menu-qr.html
+```
+
+## Cómo imprimir el menú con los QR ya cargados
+
+1. Abrir https://jcruzalmiron.github.io/stand-birria/pantalla-principal/menu-qr.html
+2. Pegar las 3 URLs en el panel superior:
+   - `https://jcruzalmiron.github.io/stand-birria/demos/claude-quest/`
+   - `https://jcruzalmiron.github.io/stand-birria/demos/pedilo-bien/`
+   - `https://jcruzalmiron.github.io/stand-birria/demos/mapa-claude/`
+3. Tocar `💾 Guardar URLs en este navegador` (quedan persistentes).
+4. `Ctrl+P` → guardar como PDF de 4 páginas (1 carta + 3 carteles).
+5. Imprimir.
+
+## Repo del proyecto
+
+https://github.com/jcruzalmiron/stand-birria
+
+- Cualquier cambio que pushees a `main` se actualiza online en ~1 minuto.
+- Para editar localmente: `git pull` → editar → `git push`.
+
+## Material físico del stand
 
 | Pieza | Dónde |
 |---|---|
-| Pantalla base del tele | `pantalla-principal/index.html` (F11) |
-| Menú trifold A4 | 1 hoja apoyada en el mostrador |
-| Carteles individuales A4 | 3 hojas en distintos puntos del stand |
+| Carta de degustación A4 | 1 hoja en el mostrador |
+| Carteles individuales A4 | 3 hojas (uno por experiencia QR) en distintos puntos |
+| Pantalla base del tele | abrir el link de la pantalla del tele en F11 |
 | Prompts en vivo | `guion/PROMPTS-DEMO.md` abierto en la notebook |
-| Mini-apps de apoyo | `demos/negocio-en-vivo/*.html` (peluquería, restaurante, kiosco) |
-| Pieza de mano para curiosos | `demos/gastos-evento/index.html` |
 
-## Checklist final
+## Checklist final pre-evento
 
-- [ ] SHIP IT! publicado y abre desde celular
-- [ ] PEDILO BIEN publicado y abre desde celular
-- [ ] MAPA DE CLAUDE publicado y abre desde celular
-- [ ] URLs pegadas arriba en este archivo
-- [ ] `menu-qr.html` configurado con las URLs reales
-- [ ] PDF imprimibles guardados en `03-QR-E-IMPRESOS/`
-- [ ] Hojas impresas (4 en total: 1 menú + 3 carteles)
+- [x] SHIP IT! publicado y abre desde celular
+- [x] PEDILO BIEN publicado y abre desde celular
+- [x] MAPA DE CLAUDE publicado y abre desde celular
+- [x] URLs activas en GitHub Pages
+- [ ] Carta + 3 carteles impresos
 - [ ] Prueba real desde 2 celulares distintos (Android + iPhone)
 - [ ] Notebook con `claude.ai` o Claude Code logueado
 - [ ] Si se va a mostrar MCP: conectores activos antes del evento
@@ -61,6 +72,7 @@ QR PNG: 03-QR-E-IMPRESOS/qr-mapa.png
 
 ## Si algo falla en vivo
 
-- **No carga el QR:** plan B con hotspot local, o pasar a la demo en notebook.
-- **No hay audio:** un toque en la página lo desbloquea.
+- **No carga el QR:** verificar conexión del visitante (no hace falta wifi del stand, sus datos móviles alcanzan).
+- **GitHub Pages caído (raro):** plan B es servir localmente con `python -m http.server 8080` dentro de la carpeta y hotspot.
+- **No hay audio en SHIP IT!:** un toque en pantalla lo desbloquea.
 - **Se cuelga:** F5 — todo arranca de cero al instante.
