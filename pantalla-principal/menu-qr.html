@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Menú QR · Stand Birria</title>
+<style>
+  *{margin:0;padding:0;box-sizing:border-box;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  :root{
+    --bg:#05070d; --panel:#0b1320; --line:#24415e; --line2:#2b4869;
+    --cyan:#5fd9ff; --violet:#9d82e8; --green:#6cf0a8; --amber:#ffce5c; --pink:#ff6ec1;
+    --text:#eaf4ff; --muted:#8aa3bd;
+  }
+  html,body{background:var(--bg);color:var(--text);font-family:system-ui,-apple-system,sans-serif}
+  body{min-height:100vh;padding:28px;
+    background:
+      radial-gradient(900px 420px at 90% -10%, rgba(157,130,232,.18), transparent 60%),
+      radial-gradient(700px 360px at 0% 110%, rgba(95,217,255,.14), transparent 60%),
+      var(--bg)}
+
+  /* ---------- panel de configuración (no se imprime) ---------- */
+  .cfg{max-width:980px;margin:0 auto 22px;background:var(--panel);border:1px solid var(--line);border-radius:18px;padding:18px 22px}
+  .cfg h2{font-size:14px;letter-spacing:2px;text-transform:uppercase;color:var(--amber);font-weight:800;margin-bottom:14px;display:flex;justify-content:space-between;align-items:center}
+  .cfg h2 .ay{font-size:11px;color:var(--muted);letter-spacing:1px;font-weight:600;text-transform:none}
+  .cfg .filas{display:flex;flex-direction:column;gap:10px}
+  .cfg .f{display:grid;grid-template-columns:130px 1fr;gap:12px;align-items:center}
+  .cfg .f label{font-size:13px;font-weight:800;color:var(--text)}
+  .cfg .f input{font:inherit;font-size:13.5px;background:#06101a;border:1px solid var(--line);color:var(--text);border-radius:9px;padding:10px 12px;width:100%}
+  .cfg .f input:focus{outline:2px solid var(--cyan);outline-offset:1px}
+  .cfg .acc{display:flex;gap:10px;margin-top:14px;flex-wrap:wrap}
+  .cfg button{font:inherit;font-weight:800;font-size:13px;letter-spacing:.5px;border:none;cursor:pointer;border-radius:10px;padding:11px 18px;color:#04121c;background:linear-gradient(135deg,var(--cyan),var(--violet))}
+  .cfg button.alt{background:#0f1d2c;color:var(--text);border:1px solid var(--line)}
+  .cfg .tip{margin-top:10px;font-size:12px;color:var(--muted);line-height:1.5;padding:10px 12px;border-left:2px solid var(--line2);background:rgba(255,255,255,.015);border-radius:0 8px 8px 0}
+  .cfg .tip b{color:var(--amber)}
+
+  /* ---------- HOJA 1: menú trifold A4 horizontal ---------- */
+  .hoja{max-width:1100px;margin:0 auto 22px;border:1px solid var(--line);border-radius:24px;padding:30px;background:rgba(11,19,32,.95);page-break-after:always;break-after:page}
+  .top{display:flex;justify-content:space-between;gap:22px;align-items:flex-start;margin-bottom:22px}
+  .eyebrow{font-size:11px;letter-spacing:3px;text-transform:uppercase;color:var(--cyan);font-weight:800;display:flex;align-items:center;gap:9px}
+  .eyebrow::before{content:'';width:22px;height:2px;background:var(--cyan)}
+  h1{font-size:46px;line-height:1;font-weight:900;font-style:italic;margin-top:8px;letter-spacing:-.5px;
+    background:linear-gradient(95deg,#fff,var(--cyan),var(--violet));-webkit-background-clip:text;background-clip:text;color:transparent}
+  .sub{margin-top:12px;color:var(--muted);font-size:15px;line-height:1.55;max-width:54ch}
+  .sub b{color:var(--green)}
+  .claim{font-size:16px;font-weight:800;color:var(--green);text-align:right;max-width:18ch;line-height:1.3;align-self:flex-end}
+
+  .grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+  .card{border:1px solid var(--line);border-radius:20px;padding:18px;background:linear-gradient(180deg,#0d1828,#09111d);display:flex;flex-direction:column;gap:10px}
+  .card .num{font-size:11px;letter-spacing:2px;font-weight:800;color:var(--muted)}
+  .card h2{font-size:24px;line-height:1.05;font-weight:900}
+  .tag{align-self:flex-start;font-size:10.5px;text-transform:uppercase;letter-spacing:1.5px;padding:5px 11px;border-radius:999px;border:1px solid;font-weight:800}
+  .desc{color:#c9dced;font-size:13.5px;line-height:1.5;min-height:64px}
+  .qrbox{margin-top:auto;aspect-ratio:1;border-radius:14px;display:flex;align-items:center;justify-content:center;padding:8px;background:#fff}
+  .qrbox img{width:100%;height:100%;display:block;image-rendering:pixelated}
+  .qrbox.vacia{background:#08111d;border:2px dashed #355a7a;color:#6888a7;font-weight:700;font-size:12px;text-align:center;padding:14px;line-height:1.4}
+  .use{font-size:12px;color:var(--muted);line-height:1.45;text-align:center}
+  .use b{color:var(--text)}
+
+  .tips{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:20px}
+  .tip{border:1px solid var(--line);border-radius:16px;padding:14px 16px;background:#09111d}
+  .tip h3{font-size:12px;letter-spacing:1.8px;text-transform:uppercase;color:var(--amber);font-weight:800}
+  .tip p{margin-top:6px;color:#c6dbee;line-height:1.55;font-size:13px}
+  .pie{margin-top:18px;padding-top:14px;border-top:1px solid #18304a;display:flex;justify-content:space-between;gap:14px;color:#6d87a1;font-size:11.5px;line-height:1.5;flex-wrap:wrap}
+  .pie b{color:#d8e8f8}
+
+  /* ---------- HOJA 2-4: carteles individuales A5 ---------- */
+  .cartel{max-width:740px;margin:0 auto 22px;border:2px solid var(--line);border-radius:28px;padding:42px 38px;background:radial-gradient(circle at 50% -20%, rgba(95,217,255,.10), transparent 60%), #0a121f;page-break-after:always;break-after:page;text-align:center;display:flex;flex-direction:column;gap:18px;align-items:center}
+  .cartel .num{font-size:12px;letter-spacing:3px;font-weight:800;color:var(--muted)}
+  .cartel h2{font-size:54px;line-height:1;font-weight:900;font-style:italic;letter-spacing:-1px}
+  .cartel .tag{font-size:11px;padding:6px 14px}
+  .cartel .desc{font-size:16px;color:#cfe2f3;line-height:1.55;max-width:34ch;min-height:auto}
+  .cartel .qrbox{width:300px;height:300px;aspect-ratio:auto;border-radius:18px}
+  .cartel .use{font-size:13.5px;color:#a3bbd1;max-width:30ch}
+  .cartel .ev{font-size:11px;letter-spacing:2.5px;color:#3f5a7a;text-transform:uppercase;margin-top:6px}
+  .cartel .ev b{color:var(--cyan)}
+
+  /* ---------- print ---------- */
+  @media print{
+    @page{size:A4;margin:10mm}
+    body{padding:0;background:#fff;color:#000}
+    .cfg{display:none}
+    .hoja,.cartel{margin:0;border:none;background:#fff;color:#000;border-radius:0;max-width:none;box-shadow:none;page-break-after:always}
+    .hoja{padding:0}
+    .cartel{padding:24px;min-height:97vh}
+    .card,.tip{background:#fff;border-color:#000}
+    .card .desc,.tip p,.sub,.use,.pie{color:#000}
+    .pie{border-color:#000}
+    h1,.cartel h2{color:#000;-webkit-text-fill-color:#000;background:none}
+    .eyebrow{color:#000}
+    .eyebrow::before{background:#000}
+    .claim{color:#000}
+    .qrbox{background:#fff;border:1px solid #000}
+    .tag{border-color:#000 !important;color:#000 !important;background:#fff !important}
+  }
+</style>
+</head>
+<body>
+
+<!-- panel de configuración (no se imprime) -->
+<div class="cfg">
+  <h2><span>⚙️ Configurar URLs</span><span class="ay">Se generan los QR al instante. Después: Ctrl+P para imprimir.</span></h2>
+  <div class="filas">
+    <div class="f"><label>🎮 SHIP IT!</label><input id="u-ship" placeholder="https://tu-dominio.com/claude-quest/"></div>
+    <div class="f"><label>✍️ PEDILO BIEN</label><input id="u-pedi" placeholder="https://tu-dominio.com/pedilo-bien/"></div>
+    <div class="f"><label>🗺️ MAPA DE CLAUDE</label><input id="u-mapa" placeholder="https://tu-dominio.com/mapa-claude/"></div>
+  </div>
+  <div class="acc">
+    <button id="b-imp">🖨 Imprimir menú + 3 carteles</button>
+    <button class="alt" id="b-guardar">💾 Guardar URLs en este navegador</button>
+    <button class="alt" id="b-limpiar">↺ Limpiar</button>
+  </div>
+  <div class="tip"><b>Tip:</b> al imprimir salen 4 hojas — el menú trifold (1 hoja) y un cartel grande por experiencia (3 hojas A4) para colgar en distintos puntos del stand. Los QR se generan con la API pública de qrserver.com: necesitás internet al momento de generar/imprimir, después el papel no necesita más nada.</div>
+</div>
+
+<!-- ============ HOJA 1: MENÚ ============ -->
+<section class="hoja">
+  <div class="top">
+    <div>
+      <div class="eyebrow">3° Degustación Birria · menú interactivo</div>
+      <h1>ESCANEÁ LO QUE QUIERAS PROBAR</h1>
+      <div class="sub">No hace falta entender todo de entrada. Elegí una experiencia según lo que te interese: <b>jugar</b>, <b>pedirle mejor a Claude</b> o <b>entender todas sus herramientas</b>.</div>
+    </div>
+    <div class="claim">Mientras el resto conversa, Claude construye.</div>
+  </div>
+
+  <div class="grid">
+    <article class="card">
+      <div class="num">01 — WOW</div>
+      <h2>Jugá</h2>
+      <span class="tag" style="color:var(--pink);border-color:rgba(255,110,193,.5)">SHIP IT! · 90 seg</span>
+      <div class="desc">Arcade de un pulgar: atrapás pedidos y construís la ciudad. Los power-ups son piezas reales del stack de Claude.</div>
+      <div class="qrbox vacia" id="qr-ship">Pegá la URL de SHIP IT! arriba ↑</div>
+      <div class="use"><b>Cuándo:</b> para arrancar por algo rápido y visual.</div>
+    </article>
+
+    <article class="card">
+      <div class="num">02 — UTILIDAD</div>
+      <h2>Pedí bien</h2>
+      <span class="tag" style="color:var(--cyan);border-color:rgba(95,217,255,.5)">PEDILO BIEN · 60 seg</span>
+      <div class="desc">4 preguntas y te llevás un pedido profesional para Claude — el de TU caso — para usar el lunes.</div>
+      <div class="qrbox vacia" id="qr-pedi">Pegá la URL de PEDILO BIEN arriba ↑</div>
+      <div class="use"><b>Cuándo:</b> si tenés un negocio o un problema concreto.</div>
+    </article>
+
+    <article class="card">
+      <div class="num">03 — CONOCIMIENTO</div>
+      <h2>Conocé el mapa</h2>
+      <span class="tag" style="color:var(--green);border-color:rgba(108,240,168,.5)">EL MAPA · 5 min</span>
+      <div class="desc">15 herramientas del ecosistema (chat, visión, skills, MCP, agentes, Claude Code…) explicadas para cualquier edad.</div>
+      <div class="qrbox vacia" id="qr-mapa">Pegá la URL del MAPA arriba ↑</div>
+      <div class="use"><b>Cuándo:</b> para entender qué más hay además del chat.</div>
+    </article>
+  </div>
+
+  <div class="tips">
+    <div class="tip">
+      <h3>🪄 Querés ver algo en vivo</h3>
+      <p>En la notebook del stand mostramos lo que te interese: artifacts (apps en segundos), skills (presentaciones reales), subagentes en paralelo, MCP con tus datos o Claude usando Chrome.</p>
+    </div>
+    <div class="tip">
+      <h3>💼 Tenés un caso propio</h3>
+      <p>Contanos qué te gustaría resolver y te mostramos el camino: qué prompt usar, qué piezas del ecosistema combinar y por dónde empezar mañana.</p>
+    </div>
+  </div>
+
+  <div class="pie">
+    <div><b>Tip:</b> escaneá ahora lo que te llame y seguilo en tu casa con calma.</div>
+    <div><b>Ecosistema:</b> Chat · Visión · Artifacts · Documentos · MCP · Web · Computer use · Code · Agents · Skills · Memoria · Proyectos · Tareas</div>
+  </div>
+</section>
+
+<!-- ============ HOJAS 2/3/4: CARTELES INDIVIDUALES ============ -->
+<section class="cartel" id="c-ship">
+  <div class="num">01 — WOW</div>
+  <h2 style="color:var(--pink)">Jugá <span style="color:var(--text);font-style:normal">SHIP IT!</span></h2>
+  <span class="tag" style="color:var(--pink);border-color:rgba(255,110,193,.5)">90 segundos · un pulgar · tu celular</span>
+  <div class="desc">Arcade vertical: atrapás pedidos para construir la ciudad. Los power-ups son <b>piezas reales</b> del stack de Claude — al final ves cuáles te sirven.</div>
+  <div class="qrbox vacia" id="qr-ship-big">Pegá la URL de SHIP IT! en el panel ↑</div>
+  <div class="use">Escaneá con la cámara del celu y jugá ahí mismo. No necesitás instalar nada.</div>
+  <div class="ev">3° Degustación Birria · <b>Claude Fable 5</b></div>
+</section>
+
+<section class="cartel" id="c-pedi">
+  <div class="num">02 — UTILIDAD</div>
+  <h2 style="color:var(--cyan)">Pedí bien <span style="color:var(--text);font-style:normal">a Claude</span></h2>
+  <span class="tag" style="color:var(--cyan);border-color:rgba(95,217,255,.5)">4 preguntas · 60 segundos · uso real</span>
+  <div class="desc">Te llevás <b>tu pedido</b> redactado por nosotros: claro, con el stack que conviene a tu caso. Lo copiás o te lo mandás por WhatsApp.</div>
+  <div class="qrbox vacia" id="qr-pedi-big">Pegá la URL de PEDILO BIEN en el panel ↑</div>
+  <div class="use">Ideal si tenés un negocio, un trabajo o un problema concreto que querés resolver con IA.</div>
+  <div class="ev">3° Degustación Birria · <b>Claude Fable 5</b></div>
+</section>
+
+<section class="cartel" id="c-mapa">
+  <div class="num">03 — CONOCIMIENTO</div>
+  <h2 style="color:var(--green)">El mapa <span style="color:var(--text);font-style:normal">de Claude</span></h2>
+  <span class="tag" style="color:var(--green);border-color:rgba(108,240,168,.5)">15 herramientas · todas las edades</span>
+  <div class="desc">El 99% usa solo el chat. <b>Vos podés más:</b> visión, artifacts, MCP, agentes, Claude Code, skills, memoria… todas con un ejemplo real.</div>
+  <div class="qrbox vacia" id="qr-mapa-big">Pegá la URL del MAPA en el panel ↑</div>
+  <div class="use">Ideal para curiosos y para quien quiera <b>aprender a usar mejor</b> la IA que ya tiene a mano.</div>
+  <div class="ev">3° Degustación Birria · <b>Claude Fable 5</b></div>
+</section>
+
+<script>
+"use strict";
+const $=id=>document.getElementById(id);
+const CAMPOS=[
+  {input:'u-ship', dest:['qr-ship','qr-ship-big']},
+  {input:'u-pedi', dest:['qr-pedi','qr-pedi-big']},
+  {input:'u-mapa', dest:['qr-mapa','qr-mapa-big']},
+];
+function pinta(url,id){
+  const box=$(id);if(!box)return;
+  if(!url||!/^https?:\/\//i.test(url)){
+    box.className='qrbox vacia';
+    box.innerHTML=box.dataset.placeholder||box.textContent;
+    return;
+  }
+  if(!box.dataset.placeholder)box.dataset.placeholder=box.textContent;
+  box.className='qrbox';
+  /* qrserver es estable y gratuita; tamaño grande para imprimir nítido */
+  const sz=id.endsWith('-big')?600:400;
+  box.innerHTML='<img alt="QR" src="https://api.qrserver.com/v1/create-qr-code/?size='+sz+'x'+sz+'&margin=0&data='+encodeURIComponent(url)+'">';
+}
+function actualizar(){
+  CAMPOS.forEach(c=>{const v=$(c.input).value.trim();c.dest.forEach(id=>pinta(v,id));});
+}
+CAMPOS.forEach(c=>$(c.input).addEventListener('input',actualizar));
+
+/* persistencia simple */
+const K='birria-qr-urls-v1';
+$('b-guardar').onclick=()=>{
+  const o={};CAMPOS.forEach(c=>o[c.input]=$(c.input).value);
+  try{localStorage.setItem(K,JSON.stringify(o));$('b-guardar').textContent='✓ Guardado';
+    setTimeout(()=>$('b-guardar').textContent='💾 Guardar URLs en este navegador',1500);}catch(e){}
+};
+$('b-limpiar').onclick=()=>{CAMPOS.forEach(c=>$(c.input).value='');actualizar();try{localStorage.removeItem(K);}catch(e){}};
+$('b-imp').onclick=()=>window.print();
+
+try{const o=JSON.parse(localStorage.getItem(K)||'{}');CAMPOS.forEach(c=>{if(o[c.input])$(c.input).value=o[c.input];});}catch(e){}
+actualizar();
+</script>
+</body>
+</html>
