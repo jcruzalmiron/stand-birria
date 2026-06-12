@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Comandas · Parrilla Don Tito</title>
+<style>
+  *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+  body{background:#0d0f12;color:#eee;font-family:system-ui,-apple-system,sans-serif;min-height:100vh}
+  header{padding:18px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px}
+  h1{font-size:21px}h1 span{color:#ff9d4d}
+  .stats{display:flex;gap:8px}
+  .stat{background:#171b21;border:1px solid #262c36;border-radius:12px;padding:8px 14px;font-size:13px;color:#aaa}
+  .stat b{color:#ff9d4d;font-size:16px}
+  .tablero{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;padding:0 14px 20px}
+  @media (max-width:700px){.tablero{grid-template-columns:1fr}}
+  .col{background:#13161b;border:1px solid #232932;border-radius:18px;padding:12px;min-height:200px}
+  .col h2{font-size:13px;text-transform:uppercase;letter-spacing:1.5px;padding:4px 6px 12px;display:flex;justify-content:space-between}
+  .col h2 .n{background:#232932;border-radius:8px;padding:1px 9px;font-size:12px}
+  .c-pend h2{color:#ffd166}.c-coc h2{color:#ff9d4d}.c-listo h2{color:#7ee0a3}
+  .pedido{background:#1b2028;border:1px solid #2b323e;border-left:4px solid #ffd166;border-radius:14px;padding:12px;margin-bottom:10px;animation:pop .25s}
+  .c-coc .pedido{border-left-color:#ff9d4d}.c-listo .pedido{border-left-color:#7ee0a3}
+  @keyframes pop{from{transform:scale(.92);opacity:0}}
+  .ptop{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:6px}
+  .mesa{font-weight:800;font-size:16px}
+  .tiempo{font-size:12px;color:#8a93a3}.tiempo.tarde{color:#ff6a5e;font-weight:700}
+  .items{font-size:14px;color:#c4ccd8;line-height:1.55}
+  .total{font-size:13px;color:#7ee0a3;font-weight:700;margin-top:6px}
+  .mover{margin-top:10px;width:100%;padding:11px;border:none;border-radius:10px;font-family:inherit;font-size:14px;font-weight:700;cursor:pointer}
+  .m-coc{background:#3a2d18;color:#ffb966}.m-listo{background:#16331f;color:#7ee0a3}.m-fin{background:#232932;color:#9aa4b4}
+  .mover:active{transform:scale(.96)}
+  .vacia{color:#525c6b;text-align:center;font-size:13px;padding:24px 8px}
+  .nuevo{position:fixed;bottom:18px;right:18px;background:linear-gradient(135deg,#ff9d4d,#e0691f);color:#1a1008;border:none;border-radius:999px;padding:15px 24px;font-weight:800;font-size:15px;font-family:inherit;cursor:pointer;box-shadow:0 8px 24px rgba(255,157,77,.3)}
+</style>
+</head>
+<body>
+<header>
+  <h1>🔥 Parrilla <span>Don Tito</span> · Comandas</h1>
+  <div class="stats">
+    <div class="stat">Activos <b id="sAct">0</b></div>
+    <div class="stat">Despachados <b id="sDesp">0</b></div>
+    <div class="stat">Caja <b id="sCaja">$0</b></div>
+  </div>
+</header>
+<div class="tablero">
+  <div class="col c-pend"><h2>🕐 Pendiente <span class="n" id="nPend">0</span></h2><div id="colPend"></div></div>
+  <div class="col c-coc"><h2>👨‍🍳 En cocina <span class="n" id="nCoc">0</span></h2><div id="colCoc"></div></div>
+  <div class="col c-listo"><h2>✅ Listo <span class="n" id="nListo">0</span></h2><div id="colListo"></div></div>
+</div>
+<button class="nuevo" onclick="nuevoPedido()">＋ Pedido</button>
+
+<script>
+const ars=n=>'$'+n.toLocaleString('es-AR');
+const MENU=[['Asado p/2',38000],['Milanesa napolitana',16500],['Provoleta',9800],['Empanadas x6',10200],['Choripán',7500],['Ensalada mixta',6800],['Papas provenzal',8200],['Bife de chorizo',21000],['Flan con dulce',5500],['Gaseosa 1.5L',4800],['Vino de la casa',12000]];
+let idMesa=1, despachados=2, caja=64300;
+let pedidos=[];
+function mkPedido(estado, minAtras){
+  const n=1+Math.floor(Math.random()*3);
+  const items=[]; let tot=0;
+  for(let i=0;i<n+1;i++){const m=MENU[Math.floor(Math.random()*MENU.length)];items.push(m[0]);tot+=m[1];}
+  return {id:Date.now()+Math.random(), mesa:'Mesa '+(idMesa++), items, tot, estado, t0:Date.now()-minAtras*60000};
+}
+pedidos.push(mkPedido('pend',2), mkPedido('pend',11), mkPedido('coc',7), mkPedido('coc',16), mkPedido('listo',1));
+function nuevoPedido(){ pedidos.push(mkPedido('pend',0)); render(); }
+function mover(id){
+  const p=pedidos.find(p=>p.id===id); if(!p)return;
+  if(p.estado==='pend'){p.estado='coc';p.t0=Date.now();}
+  else if(p.estado==='coc'){p.estado='listo';p.t0=Date.now();}
+  else { pedidos=pedidos.filter(x=>x.id!==id); despachados++; caja+=p.tot; }
+  render();
+}
+function mins(p){ return Math.floor((Date.now()-p.t0)/60000); }
+function render(){
+  const cols={pend:colPend,coc:colCoc,listo:colListo};
+  const lbl={pend:['→ A cocina','m-coc'],coc:['→ Listo','m-listo'],listo:['Despachar ✓','m-fin']};
+  for(const k in cols){
+    const c=cols[k]; c.innerHTML='';
+    const ps=pedidos.filter(p=>p.estado===k);
+    if(!ps.length) c.innerHTML='<div class="vacia">— sin pedidos —</div>';
+    ps.forEach(p=>{
+      const m=mins(p), tarde=(k==='coc'&&m>15)||(k==='pend'&&m>8);
+      const el=document.createElement('div'); el.className='pedido';
+      el.innerHTML='<div class="ptop"><span class="mesa">'+p.mesa+'</span><span class="tiempo'+(tarde?' tarde':'')+'">'+(tarde?'⚠️ ':'')+'hace '+m+' min</span></div>'+
+        '<div class="items">'+p.items.join('<br>')+'</div><div class="total">'+ars(p.tot)+'</div>'+
+        '<button class="mover '+lbl[k][1]+'">'+lbl[k][0]+'</button>';
+      el.querySelector('button').onclick=()=>mover(p.id);
+      c.appendChild(el);
+    });
+  }
+  nPend.textContent=pedidos.filter(p=>p.estado==='pend').length;
+  nCoc.textContent=pedidos.filter(p=>p.estado==='coc').length;
+  nListo.textContent=pedidos.filter(p=>p.estado==='listo').length;
+  sAct.textContent=pedidos.length; sDesp.textContent=despachados; sCaja.textContent=ars(caja);
+}
+render();
+setInterval(render, 30000); // refresca los "hace X min"
+</script>
+</body>
+</html>

@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Stock · Kiosco El Faro</title>
+<style>
+  *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+  body{background:#0c1014;color:#eee;font-family:system-ui,-apple-system,sans-serif;min-height:100vh;padding-bottom:30px}
+  header{padding:18px;display:flex;justify-content:space-between;align-items:center}
+  h1{font-size:21px}h1 span{color:#5ec8f2}
+  .dia{font-size:13px;color:#7b8794}
+  .paneles{display:flex;gap:10px;padding:0 14px 14px}
+  .panel{flex:1;background:#141a21;border:1px solid #232d38;border-radius:16px;padding:14px;text-align:center}
+  .panel .v{font-size:24px;font-weight:800}.panel .l{font-size:11px;color:#7b8794;margin-top:3px;text-transform:uppercase;letter-spacing:1px}
+  .v-total{color:#7ee0a3}.v-ventas{color:#5ec8f2}.v-alerta{color:#ffb14d}
+  .alertas{margin:0 14px 14px;background:#241a10;border:1px solid #4a3318;border-radius:16px;padding:14px}
+  .alertas h2{font-size:13px;color:#ffb14d;text-transform:uppercase;letter-spacing:1px;margin-bottom:8px}
+  .alertas .item{font-size:14px;color:#e8d4b8;padding:3px 0}
+  .alertas .item b{color:#ff6a5e}
+  h2.sec{font-size:13px;color:#7b8794;text-transform:uppercase;letter-spacing:1px;padding:6px 18px}
+  .prods{padding:0 14px;display:flex;flex-direction:column;gap:8px}
+  .prod{background:#141a21;border:1px solid #232d38;border-radius:14px;padding:12px 14px;display:flex;align-items:center;gap:12px}
+  .prod.bajo{border-color:#5a3a18;background:#1a1610}
+  .emoji{font-size:24px}
+  .pinfo{flex:1}
+  .pnom{font-weight:700;font-size:15px}
+  .pdet{font-size:12.5px;color:#7b8794;margin-top:2px}
+  .pdet b.poco{color:#ffb14d}.pdet b.nada{color:#ff6a5e}
+  .vender{background:#16334a;color:#5ec8f2;border:1px solid #235070;border-radius:10px;padding:10px 16px;font-family:inherit;font-size:14px;font-weight:700;cursor:pointer;min-height:44px}
+  .vender:active{transform:scale(.94);background:#1d4360}
+  .vender:disabled{opacity:.3}
+  .reponer{background:#1a2e1f;color:#7ee0a3;border:1px solid #2a4a33;border-radius:10px;padding:10px 12px;font-family:inherit;font-size:13px;font-weight:700;cursor:pointer;min-height:44px}
+  .toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:#16334a;border:1px solid #2a587a;color:#bfe6fa;padding:12px 22px;border-radius:999px;font-size:14px;font-weight:600;opacity:0;transition:.3s;pointer-events:none;white-space:nowrap}
+  .toast.on{opacity:1}
+</style>
+</head>
+<body>
+<header>
+  <div><h1>🏪 Kiosco <span>El Faro</span></h1><div class="dia" id="fecha"></div></div>
+</header>
+<div class="paneles">
+  <div class="panel"><div class="v v-total" id="pTotal">$0</div><div class="l">Total del día</div></div>
+  <div class="panel"><div class="v v-ventas" id="pVentas">0</div><div class="l">Ventas</div></div>
+  <div class="panel"><div class="v v-alerta" id="pAlertas">0</div><div class="l">Por agotarse</div></div>
+</div>
+<div class="alertas" id="boxAlertas" hidden>
+  <h2>⚠️ Reponer pronto</h2>
+  <div id="listaAlertas"></div>
+</div>
+<h2 class="sec">Productos · tocá «Vender» para registrar</h2>
+<div class="prods" id="prods"></div>
+<div class="toast" id="toast"></div>
+
+<script>
+const ars=n=>'$'+n.toLocaleString('es-AR');
+document.getElementById('fecha').textContent=new Date().toLocaleDateString('es-AR',{weekday:'long',day:'numeric',month:'long'});
+const MIN=5;
+let productos=[
+  {e:'🥤',nom:'Coca-Cola 500ml',precio:2800,stock:14},
+  {e:'🍫',nom:'Block 38g',precio:2200,stock:4},
+  {e:'🍬',nom:'Sugus x12',precio:1500,stock:23},
+  {e:'🧉',nom:'Yerba Playadito 500g',precio:5900,stock:7},
+  {e:'🍪',nom:'Oreo x118g',precio:2600,stock:3},
+  {e:'💧',nom:'Agua Villavicencio 1.5L',precio:2100,stock:18},
+  {e:'🥔',nom:'Lays clásicas 134g',precio:4300,stock:6},
+  {e:'🚬',nom:'Encendedor BIC',precio:1900,stock:11},
+  {e:'🍭',nom:'Chupetín Mr. Pops',precio:900,stock:2},
+  {e:'🧃',nom:'Cepita 1L',precio:2500,stock:9},
+];
+let total=38650, ventas=17; // arranque con movimiento del día
+function toast(m){const t=document.getElementById('toast');t.textContent=m;t.classList.add('on');clearTimeout(t._x);t._x=setTimeout(()=>t.classList.remove('on'),1600);}
+function vender(i){
+  const p=productos[i]; if(p.stock<=0)return;
+  p.stock--; total+=p.precio; ventas++;
+  toast('✓ '+p.nom+' — '+ars(p.precio));
+  render();
+}
+function reponer(i){ productos[i].stock+=12; toast('📦 +12 '+productos[i].nom); render(); }
+function render(){
+  document.getElementById('pTotal').textContent=ars(total);
+  document.getElementById('pVentas').textContent=ventas;
+  const bajos=productos.filter(p=>p.stock<=MIN);
+  document.getElementById('pAlertas').textContent=bajos.length;
+  document.getElementById('boxAlertas').hidden=!bajos.length;
+  document.getElementById('listaAlertas').innerHTML=bajos.map(p=>'<div class="item">'+p.e+' '+p.nom+' — quedan <b>'+p.stock+'</b></div>').join('');
+  const c=document.getElementById('prods'); c.innerHTML='';
+  productos.forEach((p,i)=>{
+    const el=document.createElement('div'); el.className='prod'+(p.stock<=MIN?' bajo':'');
+    const cls=p.stock===0?'nada':(p.stock<=MIN?'poco':'');
+    el.innerHTML='<div class="emoji">'+p.e+'</div><div class="pinfo"><div class="pnom">'+p.nom+'</div>'+
+      '<div class="pdet">'+ars(p.precio)+' · stock: <b class="'+cls+'">'+(p.stock===0?'AGOTADO':p.stock+' u.')+'</b></div></div>';
+    const bv=document.createElement('button'); bv.className='vender'; bv.textContent='Vender'; bv.disabled=p.stock===0; bv.onclick=()=>vender(i);
+    el.appendChild(bv);
+    if(p.stock<=MIN){const br=document.createElement('button');br.className='reponer';br.textContent='+12';br.onclick=()=>reponer(i);el.appendChild(br);}
+    c.appendChild(el);
+  });
+}
+render();
+</script>
+</body>
+</html>

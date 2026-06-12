@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Turnera · Peluquería Brisa</title>
+<style>
+  *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+  body{background:#0e0e16;color:#eee;font-family:system-ui,-apple-system,sans-serif;min-height:100vh;padding-bottom:90px}
+  header{padding:20px 18px 12px;display:flex;align-items:center;justify-content:space-between}
+  header h1{font-size:22px}
+  header .logo{color:#f4a8c0}
+  header .fecha{font-size:13px;color:#888}
+  .semana{display:flex;gap:6px;padding:0 14px 14px;overflow-x:auto}
+  .dia{flex:1;min-width:48px;background:#181826;border:1px solid #26263a;border-radius:14px;padding:10px 4px;text-align:center;cursor:pointer;transition:.15s}
+  .dia .dd{font-size:11px;color:#999;text-transform:uppercase}
+  .dia .num{font-size:19px;font-weight:700;margin-top:2px}
+  .dia .pts{font-size:9px;color:#f4a8c0;margin-top:3px;letter-spacing:1px}
+  .dia.activo{background:#f4a8c0;border-color:#f4a8c0}
+  .dia.activo .dd,.dia.activo .num,.dia.activo .pts{color:#1a1020}
+  h2.sec{font-size:14px;color:#999;text-transform:uppercase;letter-spacing:1px;padding:8px 18px}
+  .lista{padding:0 14px;display:flex;flex-direction:column;gap:10px}
+  .turno{background:#181826;border:1px solid #26263a;border-radius:16px;padding:14px;display:flex;gap:14px;align-items:center}
+  .hora{font-size:17px;font-weight:800;color:#f4a8c0;min-width:56px}
+  .info{flex:1}
+  .info .nom{font-weight:700;font-size:16px}
+  .info .srv{font-size:13px;color:#999;margin-top:2px}
+  .precio{font-weight:700;color:#7ee0a3;font-size:15px}
+  .vacio{text-align:center;color:#666;padding:40px 20px;font-size:15px}
+  .fab{position:fixed;bottom:22px;left:50%;transform:translateX(-50%);background:linear-gradient(135deg,#f4a8c0,#d76a96);color:#1a1020;border:none;border-radius:999px;padding:16px 28px;font-size:16px;font-weight:800;font-family:inherit;cursor:pointer;box-shadow:0 8px 24px rgba(244,168,192,.35)}
+  .fab:active{transform:translateX(-50%) scale(.95)}
+  dialog{margin:auto;background:#1a1a2a;color:#eee;border:1px solid #33334d;border-radius:20px;padding:24px;width:min(92vw,380px)}
+  dialog::backdrop{background:rgba(0,0,0,.7)}
+  dialog h3{margin-bottom:16px}
+  dialog label{display:block;font-size:13px;color:#999;margin:12px 0 4px}
+  dialog input,dialog select{width:100%;background:#10101c;border:1px solid #33334d;border-radius:10px;padding:12px;color:#eee;font-size:16px;font-family:inherit}
+  .dbtns{display:flex;gap:10px;margin-top:20px}
+  .dbtns button{flex:1;padding:13px;border-radius:12px;border:none;font-size:15px;font-weight:700;font-family:inherit;cursor:pointer}
+  .ok{background:#f4a8c0;color:#1a1020}.cancel{background:#26263a;color:#ccc}
+  .resumen{display:flex;gap:10px;padding:0 14px 14px}
+  .chip{flex:1;background:#181826;border:1px solid #26263a;border-radius:14px;padding:12px;text-align:center}
+  .chip .v{font-size:20px;font-weight:800;color:#f4a8c0}.chip .l{font-size:11px;color:#888;margin-top:2px}
+</style>
+</head>
+<body>
+<header>
+  <div><h1><span class="logo">✂︎</span> Peluquería Brisa</h1><div class="fecha" id="fechaHoy"></div></div>
+</header>
+<div class="semana" id="semana"></div>
+<div class="resumen">
+  <div class="chip"><div class="v" id="cTurnos">0</div><div class="l">turnos hoy</div></div>
+  <div class="chip"><div class="v" id="cIngresos">$0</div><div class="l">estimado del día</div></div>
+  <div class="chip"><div class="v" id="cLibre">—</div><div class="l">próximo libre</div></div>
+</div>
+<h2 class="sec">Clientes del día</h2>
+<div class="lista" id="lista"></div>
+<button class="fab" onclick="dlg.showModal()">＋ Agregar turno</button>
+
+<dialog id="dlg">
+  <h3>Nuevo turno</h3>
+  <label>Cliente</label><input id="fNom" placeholder="Nombre y apellido">
+  <label>Servicio</label>
+  <select id="fSrv">
+    <option data-p="9500">Corte · $9.500</option>
+    <option data-p="14000">Corte y barba · $14.000</option>
+    <option data-p="22000">Color · $22.000</option>
+    <option data-p="12000">Brushing · $12.000</option>
+    <option data-p="35000">Balayage · $35.000</option>
+  </select>
+  <label>Hora</label><input id="fHora" type="time" value="15:00">
+  <div class="dbtns">
+    <button class="cancel" onclick="dlg.close()">Cancelar</button>
+    <button class="ok" onclick="agregar()">Guardar</button>
+  </div>
+</dialog>
+
+<script>
+const ars = n => '$' + n.toLocaleString('es-AR');
+const DIAS=['lun','mar','mié','jue','vie','sáb','dom'];
+const hoy = new Date();
+document.getElementById('fechaHoy').textContent = hoy.toLocaleDateString('es-AR',{weekday:'long',day:'numeric',month:'long'});
+
+// datos de ejemplo: turnos por día de la semana (0=lunes)
+const NOMBRES=['Marta López','Juli Fernández','Caro Díaz','Rodri Páez','Sofi Méndez','Vale Ríos','Nico Aguirre','Flor Cabrera','Andrés Soto','Mica Herrera'];
+const SERVICIOS=[['Corte',9500],['Corte y barba',14000],['Color',22000],['Brushing',12000],['Balayage',35000]];
+const datos={};
+let seed=7;
+const rng=()=>{seed=(seed*16807)%2147483647;return seed/2147483647};
+for(let d=0;d<7;d++){
+  datos[d]=[];
+  const n = d===6?0 : 3+Math.floor(rng()*4);
+  let h=9.5+Math.floor(rng()*2);
+  for(let i=0;i<n;i++){
+    const s=SERVICIOS[Math.floor(rng()*SERVICIOS.length)];
+    datos[d].push({hora:String(Math.floor(h)).padStart(2,'0')+':'+(h%1?'30':'00'),nom:NOMBRES[Math.floor(rng()*NOMBRES.length)],srv:s[0],precio:s[1]});
+    h+=1+Math.floor(rng()*2)*0.5+ (rng()>0.6?1:0);
+    if(h>19) break;
+  }
+}
+
+let diaSel=(hoy.getDay()+6)%7; // hoy, en índice lunes=0
+const lunes=new Date(hoy); lunes.setDate(hoy.getDate()-diaSel);
+
+function renderSemana(){
+  const c=document.getElementById('semana'); c.innerHTML='';
+  for(let d=0;d<7;d++){
+    const f=new Date(lunes); f.setDate(lunes.getDate()+d);
+    const el=document.createElement('div');
+    el.className='dia'+(d===diaSel?' activo':'');
+    el.innerHTML='<div class="dd">'+DIAS[d]+'</div><div class="num">'+f.getDate()+'</div><div class="pts">'+'●'.repeat(Math.min(datos[d].length,4))+'</div>';
+    el.onclick=()=>{diaSel=d;renderSemana();renderLista();};
+    c.appendChild(el);
+  }
+}
+function renderLista(){
+  const c=document.getElementById('lista'); c.innerHTML='';
+  const ts=[...datos[diaSel]].sort((a,b)=>a.hora.localeCompare(b.hora));
+  if(!ts.length){ c.innerHTML='<div class="vacio">Día libre 🌿 — sin turnos agendados</div>'; }
+  ts.forEach(t=>{
+    const el=document.createElement('div'); el.className='turno';
+    el.innerHTML='<div class="hora">'+t.hora+'</div><div class="info"><div class="nom">'+t.nom+'</div><div class="srv">'+t.srv+'</div></div><div class="precio">'+ars(t.precio)+'</div>';
+    c.appendChild(el);
+  });
+  document.getElementById('cTurnos').textContent=ts.length;
+  document.getElementById('cIngresos').textContent=ars(ts.reduce((a,t)=>a+t.precio,0));
+  // próximo hueco libre: primera hora entera entre 9 y 19 sin turno
+  let libre='—';
+  for(let h=9;h<20;h++){ const hh=String(h).padStart(2,'0')+':00'; if(!ts.some(t=>t.hora===hh)){libre=hh;break;} }
+  document.getElementById('cLibre').textContent=libre;
+}
+function agregar(){
+  const nom=document.getElementById('fNom').value.trim()||'Cliente sin nombre';
+  const sel=document.getElementById('fSrv');
+  const opt=sel.options[sel.selectedIndex];
+  datos[diaSel].push({hora:document.getElementById('fHora').value||'15:00',nom,srv:opt.text.split(' · ')[0],precio:+opt.dataset.p});
+  document.getElementById('fNom').value='';
+  dlg.close(); renderSemana(); renderLista();
+}
+renderSemana(); renderLista();
+</script>
+</body>
+</html>
