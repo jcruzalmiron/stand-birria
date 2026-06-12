@@ -8,8 +8,8 @@ Todo es HTML autocontenido: funciona **sin internet**, se abre con **doble clic*
 
 | Pieza | Archivo | Rol |
 |---|---|---|
-| ⭐ **SHIP IT!** (QR / celular) | `demos/claude-quest/index.html` | La experiencia principal del visitante: arcade de 90 seg, un pulgar, donde los 5 módulos del stack son power-ups. Termina con el mapa mental. |
-| **Arena Birria** (JRPG) | `demos/arena-rpg/index.html` | Demo wow de pantalla grande: party de 3 héroes, 2 jefes con fases, chiptune sintetizado, sprites por código. |
+| ⭐ **SHIP IT!** (QR / celular) | `demos/claude-quest/index.html` | Capa wow: arcade de 90 seg, un pulgar, donde los 5 módulos del stack son power-ups. Termina con el mapa mental. |
+| ⭐ **PEDILO BIEN** | `demos/pedilo-bien/index.html` | Capa utilidad: 4 preguntas y el visitante se lleva su pedido profesional para Claude (copiar / WhatsApp) + el stack recomendado con razones. Sirve en pantalla grande y en tablet. |
 | **Pantalla de espera** | `pantalla-principal/index.html` | Frase central + terminal que narra en loop el criterio de stack + lugar para pegar el QR impreso. |
 | **Cartel industrias** | `pantalla-principal/industrias.html` | Rotativo de casos por rubro (tablet secundaria). |
 | Mini-apps de negocio | `demos/negocio-en-vivo/*.html` | Apoyo de la capa comprensión: peluquería (prompt+Code), restaurante (entra MCP), kiosco. |
@@ -18,7 +18,7 @@ Todo es HTML autocontenido: funciona **sin internet**, se abre con **doble clic*
 
 ## Qué abrir en qué pantalla
 
-- **Monitor 55"** → `pantalla-principal/index.html` en F11 (espera) · cambiar a `arena-rpg` o mini-apps durante la demo (tener pestañas abiertas, `Ctrl+Tab`).
+- **Monitor 55"** → `pantalla-principal/index.html` en F11 (espera) · cambiar a `pedilo-bien` o mini-apps durante la demo (tener pestañas abiertas, `Ctrl+Tab`).
 - **Tablet de apoyo** → `pantalla-principal/industrias.html`.
 - **Celular del visitante** → SHIP IT! vía QR (ver abajo).
 
@@ -36,7 +36,7 @@ El juego es un único archivo, pero un QR necesita una **URL accesible desde el 
 ## Orden de demos según el visitante
 
 - **Cualquiera con celular** → QR de SHIP IT! primero. Es la pieza que se llevan puesta.
-- **Chico / joven** → Arena Birria en la pantalla grande después del QR.
+- **Chico / joven** → SHIP IT! de nuevo (van a querer superar el puntaje) y la pantalla grande con la terminal.
 - **Adulto con negocio** → su mini-app + la explicación de stack del guion ("para esto alcanza prompt+Code; para aquello entra MCP").
 - **Curioso general** → gastos del evento o SHIP IT! de nuevo (van a querer mejorar el puntaje).
 
@@ -46,8 +46,8 @@ El juego es un único archivo, pero un QR necesita una **URL accesible desde el 
 - [ ] Imprimir el QR (mínimo A5) y pegarlo en el marco de la pantalla de espera.
 - [ ] Copiar la carpeta `stand-birria/` a las dos máquinas + pendrive de respaldo.
 - [ ] Abrir cada HTML y verificar consola limpia (F12).
-- [ ] Probar audio del JRPG (el sonido arranca con el primer clic/tap — los browsers lo bloquean antes).
-- [ ] Probar touch en la tablet (JRPG, comandas, kiosco).
+- [ ] Probar audio de SHIP IT! (el sonido arranca con el primer tap — los browsers lo bloquean antes).
+- [ ] Probar touch en la tablet (SHIP IT!, PEDILO BIEN, comandas, kiosco).
 - [ ] Chrome en F11 en el 55", `Ctrl+0` de zoom, brillo al máximo.
 - [ ] Desactivar suspensión de pantalla y notificaciones en todas las máquinas.
 - [ ] Cargar tablet y llevar cargadores.

@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#04060c">
+<title>PEDILO BIEN — armá tu pedido para Claude</title>
+<style>
+  *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+  :root{
+    --bg:#04060c; --panel:#0b1320; --panel2:#0e1828; --line:#1c3049; --line2:#2b4869;
+    --text:#eaf4ff; --muted:#8aa3bd; --dim:#5b7693;
+    --cyan:#5fd9ff; --violet:#9d82e8; --pink:#ff6ec1; --green:#6cf0a8; --amber:#ffce5c;
+  }
+  html,body{min-height:100%;background:var(--bg);color:var(--text);
+    font-family:system-ui,-apple-system,sans-serif;overscroll-behavior:none}
+  body{padding:0 0 40px;
+    background:
+      radial-gradient(900px 460px at 85% -8%, rgba(93,60,180,.22), transparent 60%),
+      radial-gradient(700px 400px at -5% 108%, rgba(20,120,160,.16), transparent 60%),
+      var(--bg)}
+  body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:60;opacity:.45;
+    background:repeating-linear-gradient(0deg,rgba(255,255,255,.02) 0 1px,transparent 1px 3px)}
+  .app{max-width:680px;margin:0 auto;padding:26px 18px 0;display:flex;flex-direction:column;gap:16px}
+
+  header{display:flex;flex-direction:column;gap:6px}
+  .eyebrow{font-size:10.5px;letter-spacing:3px;text-transform:uppercase;color:var(--cyan);font-weight:800;display:flex;align-items:center;gap:9px}
+  .eyebrow::before{content:'';width:22px;height:2px;background:var(--cyan);box-shadow:0 0 8px var(--cyan)}
+  h1{font-size:clamp(34px,8vw,46px);font-weight:900;font-style:italic;letter-spacing:-.5px;line-height:1;
+    background:linear-gradient(95deg,#fff 0%,var(--cyan) 50%,var(--violet) 100%);
+    -webkit-background-clip:text;background-clip:text;color:transparent;
+    filter:drop-shadow(0 0 22px rgba(95,217,255,.25))}
+  .baja{font-size:13.5px;color:var(--muted);line-height:1.5;max-width:48ch}
+  .baja b{color:var(--green)}
+
+  /* progreso */
+  .prog{display:flex;align-items:center;gap:8px;margin-top:2px}
+  .pSeg{flex:1;height:3px;border-radius:3px;background:#16243a;overflow:hidden}
+  .pSeg i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--cyan),var(--violet));transition:width .35s}
+  .pSeg.full i{width:100%}
+  .pTxt{font-size:11px;color:var(--dim);font-weight:700;letter-spacing:1px;min-width:34px;text-align:right}
+
+  /* paso */
+  .paso{display:none;flex-direction:column;gap:12px;animation:entra .3s}
+  .paso.on{display:flex}
+  @keyframes entra{from{opacity:0;transform:translateY(10px)}}
+  .pregunta{font-size:clamp(19px,4.5vw,24px);font-weight:900;line-height:1.2}
+  .pregunta span{color:var(--cyan)}
+  .ayuda{font-size:12.5px;color:var(--dim);margin-top:-6px}
+
+  .ops{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:9px}
+  .op{display:flex;align-items:center;gap:11px;text-align:left;font:inherit;cursor:pointer;
+    background:linear-gradient(180deg,var(--panel2),var(--panel));border:1.5px solid var(--line);
+    border-radius:15px;padding:13px 14px;color:var(--text);transition:border-color .15s,transform .1s,box-shadow .15s;min-height:60px}
+  .op:active{transform:scale(.97)}
+  .op .ic{font-size:21px;width:38px;height:38px;flex:none;display:flex;align-items:center;justify-content:center;
+    background:#0a1422;border:1px solid var(--line);border-radius:11px}
+  .op .tx{font-size:14px;font-weight:700;line-height:1.25}
+  .op .tx small{display:block;font-weight:600;font-size:11px;color:var(--dim);margin-top:2px}
+  .op.sel{border-color:var(--cyan);box-shadow:0 0 0 1px var(--cyan),0 0 24px rgba(95,217,255,.18)}
+  .op.sel .ic{border-color:var(--cyan);color:var(--cyan)}
+
+  .nav{display:flex;gap:10px;margin-top:4px}
+  .bSec{font:inherit;font-weight:700;font-size:13px;color:var(--muted);background:transparent;
+    border:1px solid var(--line);border-radius:12px;padding:13px 20px;cursor:pointer}
+  .bPri{flex:1;font:inherit;font-weight:900;font-size:15px;letter-spacing:.5px;color:#04121c;border:none;cursor:pointer;
+    border-radius:12px;padding:14px;background:linear-gradient(135deg,var(--cyan),var(--violet));
+    box-shadow:0 8px 28px rgba(95,217,255,.22)}
+  .bPri:disabled{opacity:.3;cursor:default;box-shadow:none}
+  .bPri:not(:disabled):active{transform:scale(.98)}
+
+  /* resultado */
+  .resTit{font-size:11px;letter-spacing:2.5px;text-transform:uppercase;color:var(--amber);font-weight:800}
+  .stack{display:flex;flex-direction:column;gap:8px}
+  .pieza{display:flex;gap:12px;align-items:flex-start;background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:12px 14px}
+  .pieza .pi{width:38px;height:38px;flex:none;border-radius:11px;display:flex;align-items:center;justify-content:center;font-size:17px;border:1px solid}
+  .pieza .pt{font-size:13px;line-height:1.45;color:#c2d8ec}
+  .pieza .pt b{display:block;font-size:13.5px;letter-spacing:.5px}
+  .promptCard{background:#070d18;border:1px solid var(--line2);border-radius:16px;overflow:hidden;
+    box-shadow:0 16px 50px rgba(0,0,0,.45)}
+  .pcTop{display:flex;align-items:center;gap:8px;padding:11px 14px;background:#0b1424;border-bottom:1px solid var(--line)}
+  .pcTop .dot{width:10px;height:10px;border-radius:50%}
+  .pcTop span{margin-left:6px;font-size:11.5px;color:var(--dim);font-family:ui-monospace,Consolas,monospace}
+  .pcBody{padding:16px;font-family:ui-monospace,Consolas,monospace;font-size:13px;line-height:1.65;
+    color:#cfe6f8;white-space:pre-wrap;word-break:break-word}
+  .pcBody b{color:var(--green);font-weight:700}
+  .accs{display:grid;grid-template-columns:1fr 1fr;gap:9px}
+  .acc{font:inherit;font-weight:800;font-size:13.5px;border-radius:12px;padding:14px;cursor:pointer;border:none;
+    display:flex;align-items:center;justify-content:center;gap:8px}
+  .aCopy{background:linear-gradient(135deg,var(--cyan),var(--violet));color:#04121c}
+  .aWsp{background:#0f2a1d;color:var(--green);border:1px solid #1f5038}
+  .acc:active{transform:scale(.97)}
+  .nota{font-size:12px;color:var(--dim);line-height:1.55;padding:11px 13px;border-left:2px solid var(--line2);background:rgba(255,255,255,.015);border-radius:0 10px 10px 0}
+  .nota b{color:var(--amber)}
+  .otra{align-self:center;font:inherit;background:none;border:none;color:var(--dim);font-size:12.5px;
+    text-decoration:underline;cursor:pointer;padding:8px;margin-top:2px}
+  footer{text-align:center;font-size:10px;color:#2c4763;letter-spacing:2px;text-transform:uppercase;padding:22px 0 0}
+  .toast{position:fixed;left:50%;bottom:26px;transform:translateX(-50%) translateY(80px);z-index:70;
+    background:#0c2233;border:1px solid var(--cyan);color:#d7f2ff;font-size:13.5px;font-weight:700;
+    padding:12px 22px;border-radius:999px;transition:transform .3s;box-shadow:0 10px 30px rgba(0,0,0,.5)}
+  .toast.on{transform:translateX(-50%) translateY(0)}
+</style>
+</head>
+<body>
+<div class="app">
+  <header>
+    <div class="eyebrow">3° Degustación Birria · herramienta del stand</div>
+    <h1>PEDILO BIEN</h1>
+    <div class="baja">Contestá 4 preguntas y te armamos el <b>pedido profesional para Claude</b> + el stack justo para tu caso. Te lo llevás por WhatsApp y lo usás el lunes.</div>
+    <div class="prog">
+      <div class="pSeg" id="s0"><i></i></div><div class="pSeg" id="s1"><i></i></div>
+      <div class="pSeg" id="s2"><i></i></div><div class="pSeg" id="s3"><i></i></div>
+      <div class="pTxt" id="pTxt">1/4</div>
+    </div>
+  </header>
+
+  <!-- PASO 1: rubro -->
+  <section class="paso on" id="paso0">
+    <div class="pregunta">¿A qué te <span>dedicás</span>?</div>
+    <div class="ops" id="ops0"></div>
+  </section>
+
+  <!-- PASO 2: dolor -->
+  <section class="paso" id="paso1">
+    <div class="pregunta">¿Qué te está <span>comiendo tiempo</span>?</div>
+    <div class="ayuda">Elegí lo que más duele. Después podés repetir con otro.</div>
+    <div class="ops" id="ops1"></div>
+  </section>
+
+  <!-- PASO 3: datos -->
+  <section class="paso" id="paso2">
+    <div class="pregunta">¿Dónde está esa info <span>hoy</span>?</div>
+    <div class="ayuda">Esto define si tu caso necesita conectar datos (MCP) o no.</div>
+    <div class="ops" id="ops2"></div>
+  </section>
+
+  <!-- PASO 4: restricciones -->
+  <section class="paso" id="paso3">
+    <div class="pregunta">¿Qué <span>no puede faltar</span>?</div>
+    <div class="ayuda">Marcá todas las que apliquen — las restricciones hacen al buen pedido.</div>
+    <div class="ops" id="ops3"></div>
+    <div class="nav">
+      <button class="bSec" id="bAtras3">← Atrás</button>
+      <button class="bPri" id="bArmar">⚡ Armar mi pedido</button>
+    </div>
+  </section>
+
+  <!-- RESULTADO -->
+  <section class="paso" id="paso4">
+    <div class="resTit">① Tu stack recomendado</div>
+    <div class="stack" id="stackOut"></div>
+    <div class="resTit" style="margin-top:6px">② Tu pedido, listo para mandar</div>
+    <div class="promptCard">
+      <div class="pcTop">
+        <div class="dot" style="background:#ff5f57"></div><div class="dot" style="background:#febc2e"></div><div class="dot" style="background:#28c840"></div>
+        <span>pedido-para-claude.txt</span>
+      </div>
+      <div class="pcBody" id="promptOut"></div>
+    </div>
+    <div class="accs">
+      <button class="acc aCopy" id="bCopiar">⧉ Copiar pedido</button>
+      <button class="acc aWsp" id="bWsp">🟢 Mandármelo por WhatsApp</button>
+    </div>
+    <div class="nota" id="notaOut"></div>
+    <button class="otra" id="bOtra">↻ armar otro pedido</button>
+  </section>
+
+  <footer>mientras el resto conversa · claude construye · claude fable 5</footer>
+</div>
+<div class="toast" id="toast">Copiado ✓ pegalo en claude.ai</div>
+
+<script>
+"use strict";
+const $=id=>document.getElementById(id);
+
+/* ================= contenido ================= */
+const RUBROS=[
+  {id:'comercio',ic:'🏪',n:'Comercio / kiosco',ej:'almacén, tienda, ferretería',rol:'un comercio de barrio'},
+  {id:'gastro',ic:'🍳',n:'Gastronomía',ej:'restaurante, rotisería, cafetería',rol:'un local gastronómico'},
+  {id:'estetica',ic:'✂️',n:'Estética y cuidado',ej:'peluquería, barbería, uñas',rol:'un negocio de estética'},
+  {id:'oficio',ic:'🔧',n:'Oficios',ej:'gasista, electricista, pintor',rol:'un trabajador de oficio'},
+  {id:'prof',ic:'💼',n:'Profesional / freelance',ej:'contadora, diseñador, profe particular',rol:'un profesional independiente'},
+  {id:'emp',ic:'🚀',n:'Emprendimiento',ej:'venta online, servicios, lo que sea',rol:'un emprendimiento'},
+];
+const DOLORES=[
+  {id:'turnos',ic:'📅',n:'Turnos y reservas',q:'una agenda de turnos digital: calendario semanal, lista de clientes del día y alta rápida de turnos'},
+  {id:'stock',ic:'📦',n:'Stock e inventario',q:'un control de stock simple: qué hay, qué se está acabando, registro de ventas y total del día'},
+  {id:'presu',ic:'🧾',n:'Presupuestos y cobros',q:'un armador de presupuestos prolijos: cargo los ítems y me genera un presupuesto profesional listo para mandar al cliente'},
+  {id:'pedidos',ic:'🛎️',n:'Pedidos y entregas',q:'un tablero de pedidos: qué entró, qué está en preparación, qué está listo, con tiempos a la vista'},
+  {id:'papeles',ic:'📂',n:'Papeles y planillas',q:'ordenar mis registros: pasar lo que anoto a algo claro, con totales, búsquedas y resúmenes por semana y por mes'},
+  {id:'clientes',ic:'💬',n:'Clientes y seguimiento',q:'un seguimiento de clientes: quién vino, cuándo volver a contactarlo, recordatorios y mensajes tipo para WhatsApp'},
+];
+const DATOS=[
+  {id:'papel',ic:'📓',n:'En papel / cuaderno',mcp:false,frase:'hoy todo lo anoto en papel'},
+  {id:'excel',ic:'📊',n:'En planillas (Excel/Sheets)',mcp:true,frase:'hoy uso planillas de cálculo y quiero que la herramienta pueda leerlas'},
+  {id:'app',ic:'📱',n:'En otra app o sistema',mcp:true,frase:'parte de la información vive en otra app o sistema y necesito que se conecte con eso'},
+  {id:'wsp',ic:'🟢',n:'En chats de WhatsApp',mcp:true,frase:'mucha información me llega por WhatsApp y hoy se pierde en los chats'},
+  {id:'nada',ic:'🌱',n:'Todavía en mi cabeza',mcp:false,frase:'arranco de cero, no tengo nada armado'},
+];
+const RESTRIC=[
+  {id:'celu',ic:'📱',n:'Que ande en el celular',frase:'tiene que funcionar perfecto desde el celular'},
+  {id:'simple',ic:'👵',n:'Súper fácil de usar',frase:'lo va a usar gente sin experiencia con tecnología, tiene que ser obvio'},
+  {id:'gratis',ic:'💸',n:'Sin costo mensual',frase:'no quiero pagar suscripciones: preferiría un archivo propio que abra en el navegador'},
+  {id:'marca',ic:'🎨',n:'Con mi estilo / marca',frase:'quiero que respete mi estética y mi forma de hablar con los clientes, siempre igual'},
+  {id:'hoy',ic:'⚡',n:'Para usar ya mismo',frase:'necesito una primera versión usable hoy, aunque sea simple, y mejorarla después'},
+  {id:'todo',ic:'🧩',n:'Ordenar varias cosas',frase:'en realidad necesito resolver varios frentes del negocio, no solo esto'},
+];
+
+const PIEZAS={
+  prompt:{n:'PROMPT',ic:'✍️',col:'#5fd9ff'},
+  code:{n:'CLAUDE CODE',ic:'⚡',col:'#9d82e8'},
+  mcp:{n:'MCP',ic:'🔌',col:'#6cf0a8'},
+  skill:{n:'SKILL',ic:'📐',col:'#ff6ec1'},
+  agents:{n:'AGENTS',ic:'🤖',col:'#ffce5c'},
+};
+
+/* ================= estado / wizard ================= */
+const sel={rubro:null,dolor:null,datos:null,rest:new Set()};
+let paso=0;
+
+function pinta(lista,cont,key,multi){
+  const c=$(cont);c.innerHTML='';
+  lista.forEach(item=>{
+    const b=document.createElement('button');b.className='op';b.type='button';
+    b.innerHTML='<span class="ic">'+item.ic+'</span><span class="tx">'+item.n+(item.ej?'<small>'+item.ej+'</small>':'')+'</span>';
+    b.onclick=()=>{
+      if(multi){
+        if(sel.rest.has(item.id)){sel.rest.delete(item.id);b.classList.remove('sel');}
+        else{sel.rest.add(item.id);b.classList.add('sel');}
+        $('bArmar').disabled=sel.rest.size===0;
+      }else{
+        sel[key]=item;
+        [...c.children].forEach(x=>x.classList.remove('sel'));b.classList.add('sel');
+        setTimeout(()=>irA(paso+1),220);
+      }
+    };
+    c.appendChild(b);
+  });
+}
+pinta(RUBROS,'ops0','rubro',false);
+pinta(DOLORES,'ops1','dolor',false);
+pinta(DATOS,'ops2','datos',false);
+pinta(RESTRIC,'ops3',null,true);
+$('bArmar').disabled=true;
+
+function irA(n){
+  paso=n;
+  for(let i=0;i<5;i++)$('paso'+i).classList.toggle('on',i===n);
+  for(let i=0;i<4;i++)$('s'+i).classList.toggle('full',i<Math.min(n+ (n<4?1:0),4)&&i<=n||i<n);
+  $('pTxt').textContent=(Math.min(n,3)+1)+'/4';
+  if(n===4)armar();
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+$('bAtras3').onclick=()=>irA(2);
+$('bArmar').onclick=()=>irA(4);
+$('bOtra').onclick=()=>{
+  sel.rubro=sel.dolor=sel.datos=null;sel.rest.clear();
+  document.querySelectorAll('.op.sel').forEach(x=>x.classList.remove('sel'));
+  $('bArmar').disabled=true;irA(0);
+};
+/* atrás con tap en los segmentos */
+[0,1,2,3].forEach(i=>$('s'+i).onclick=()=>{if(i<paso)irA(i);});
+
+/* ================= armado ================= */
+function stackPara(){
+  const out=[];
+  out.push({p:'prompt',por:'Tu pedido bien definido: objetivo, contexto y restricciones. Es lo que estás armando acá.'});
+  out.push({p:'code',por:'Claude Code implementa de verdad: crea el archivo, lo prueba y corrige errores hasta que funciona.'});
+  if(sel.datos.mcp)out.push({p:'mcp',por:'Tu información vive en '+sel.datos.n.toLowerCase().replace('en ','')+': hace falta el puerto que conecta Claude con esos datos.'});
+  if(sel.rest.has('marca'))out.push({p:'skill',por:'Querés estilo consistente: una skill fija tu estética y tono una vez, y se respeta en cada entrega.'});
+  if(sel.rest.has('todo'))out.push({p:'agents',por:'Varios frentes a la vez: subagentes se reparten el trabajo en paralelo sin perder calidad.'});
+  return out;
+}
+function textoPrompt(){
+  const r=sel.rubro,d=sel.dolor,dat=sel.datos;
+  const restFrases=[...sel.rest].filter(x=>x!=='todo').map(id=>RESTRIC.find(rr=>rr.id===id).frase);
+  let p='Quiero que actúes como un equipo de producto y desarrollo.\n\n';
+  p+='Tengo '+r.rol+' y necesito '+d.q+'.\n\n';
+  p+='Contexto: '+dat.frase+'.';
+  if(sel.rest.has('todo'))p+=' Este es el problema más urgente, pero a futuro quiero ordenar otros frentes del negocio: planteá la solución de forma que pueda crecer.';
+  p+='\n\nRestricciones:\n';
+  p+='- En español rioplatense, con montos en pesos argentinos.\n';
+  restFrases.forEach(f=>{p+='- '+f.charAt(0).toUpperCase()+f.slice(1)+'.\n';});
+  if(!sel.rest.has('gratis'))p+='- Preferí la solución más simple que funcione; nada de complejidad innecesaria.\n';
+  p+='\nAntes de construir, haceme las 3 preguntas que más cambien el resultado. Después entregame una primera versión funcionando que pueda probar hoy mismo, y decime qué mejorarías en la versión 2.';
+  return p;
+}
+function armar(){
+  const stack=stackPara();
+  $('stackOut').innerHTML=stack.map(s=>{
+    const z=PIEZAS[s.p];
+    return '<div class="pieza"><div class="pi" style="color:'+z.col+';border-color:'+z.col+'55;background:'+z.col+'12">'+z.ic+'</div>'+
+      '<div class="pt"><b style="color:'+z.col+'">'+z.n+'</b>'+s.por+'</div></div>';}).join('');
+  $('promptOut').textContent=textoPrompt();
+  const conMcp=sel.datos.mcp;
+  $('notaOut').innerHTML='<b>Cómo seguís:</b> '+(conMcp
+    ?'pegá este pedido en claude.ai o Claude Code. Como tu caso toca datos externos, el primer paso del chat va a ser conectar esa fuente (Claude te guía). Sin humo: la versión 1 sale simple y se mejora iterando.'
+    :'pegá este pedido en claude.ai o en Claude Code y respondé sus preguntas. Tu caso es de los lindos: alcanza con un buen pedido + Claude Code, sin piezas extra. La versión 1 puede estar funcionando hoy.');
+}
+
+/* ================= acciones ================= */
+function toast(m){const t=$('toast');t.textContent=m;t.classList.add('on');
+  clearTimeout(t._x);t._x=setTimeout(()=>t.classList.remove('on'),2200);}
+$('bCopiar').onclick=async()=>{
+  const txt=$('promptOut').textContent;
+  try{await navigator.clipboard.writeText(txt);toast('Copiado ✓ pegalo en claude.ai');}
+  catch(e){
+    const ta=document.createElement('textarea');ta.value=txt;document.body.appendChild(ta);
+    ta.select();try{document.execCommand('copy');toast('Copiado ✓ pegalo en claude.ai');}
+    catch(e2){toast('Seleccioná el texto y copialo manualmente');}
+    ta.remove();
+  }
+};
+$('bWsp').onclick=()=>{
+  const txt='Mi pedido para Claude (armado en el stand de la 3° Degustación Birria):\n\n'+$('promptOut').textContent;
+  open('https://wa.me/?text='+encodeURIComponent(txt),'_blank');
+};
+</script>
+</body>
+</html>

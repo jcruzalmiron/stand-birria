@@ -5,7 +5,7 @@
 
 La experiencia tiene **dos capas**, y el guion las recorre en orden:
 
-1. **Capa wow** → algo que se siente imposible de tener "recién hecho": el arcade **SHIP IT!** en su celu (QR) o el JRPG **Arena Birria** en la pantalla grande.
+1. **Capa wow** → algo que se siente imposible de tener "recién hecho": el arcade **SHIP IT!** en su celu (QR).
 2. **Capa comprensión** → el mensaje honesto: Claude no es magia ni solo chat; el valor está en armar el **stack** correcto (Prompt · Skill · MCP · Agents · Claude Code) según el problema.
 
 La gracia: la capa 2 ya viene contrabandeada dentro de la capa 1 — en SHIP IT! los módulos del stack son power-ups que cambian el juego, y el final muestra el mapa mental.
@@ -36,9 +36,10 @@ La gracia: la capa 2 ya viene contrabandeada dentro de la capa 1 — en SHIP IT!
 
 **1. Gancho (2 min)** — igual que arriba, con SHIP IT! en los celus de todos a la vez (es multijugador de hecho: comparan puntajes).
 
-**2. Demo grande: Arena Birria (4 min)**
-- En la pantalla de 55": JRPG con party de 3, jefe con fases, música chiptune. "Cero imágenes, cero archivos de audio: todo está dibujado y sintetizado por código que escribió Claude."
-- Dejá que un visitante juegue una ronda. Mostrá el jefe entrando en furia.
+**2. Herramienta grande: PEDILO BIEN (4 min)**
+- En la pantalla de 55": le hacés las 4 preguntas al visitante sobre SU negocio y la herramienta arma su pedido en vivo.
+- El remate: "esto que ves no es un formulario cualquiera — es cómo se le pide bien a una IA. Mandátelo por WhatsApp y usalo esta noche."
+- Si eligió "papel/cuaderno", señalá que el stack quedó mínimo: "fijate que no te vendimos piezas de más: tu caso sale con un buen pedido y Claude Code, punto."
 
 **3. Capa comprensión con ejemplos reales (5 min)**
 - "¿Alguien tiene un negocio?" → abrí la mini-app del rubro (peluquería / restaurante / kiosco).
