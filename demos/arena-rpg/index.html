@@ -1,0 +1,386 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>ARENA BIRRIA — RPG generado por Claude</title>
+<style>
+  * { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+  html,body { height:100%; overflow:hidden; background:#0a0a14; font-family:system-ui,-apple-system,sans-serif; color:#fff; touch-action:manipulation; }
+  #wrap { position:relative; width:100%; height:100%; display:flex; align-items:center; justify-content:center; }
+  canvas { display:block; max-width:100%; max-height:100%; }
+  .screen { position:absolute; inset:0; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:18px; z-index:10; }
+  .hidden { display:none !important; }
+  h1.titulo { font-size:clamp(40px,8vw,86px); letter-spacing:4px; font-weight:900;
+    background:linear-gradient(180deg,#ffd76e,#ff7b3d); -webkit-background-clip:text; background-clip:text; color:transparent;
+    text-shadow:0 0 40px rgba(255,150,50,.25); }
+  .sub { color:#9b8cff; font-size:clamp(14px,2vw,20px); letter-spacing:2px; }
+  .heroes { display:flex; gap:20px; flex-wrap:wrap; justify-content:center; padding:10px; }
+  .card { width:200px; background:#15152a; border:2px solid #2c2c52; border-radius:16px; padding:16px; cursor:pointer;
+    text-align:center; transition:transform .15s, border-color .15s, box-shadow .15s; user-select:none; }
+  .card:hover, .card:active { transform:translateY(-6px); border-color:#9b8cff; box-shadow:0 10px 30px rgba(120,90,255,.25); }
+  .card canvas { margin:0 auto 8px; }
+  .card h3 { font-size:20px; margin-bottom:4px; }
+  .card p { font-size:13px; color:#a9a9c8; line-height:1.4; }
+  .stat { display:inline-block; margin:6px 4px 0; font-size:12px; background:#23234a; border-radius:8px; padding:3px 8px; }
+  #ui { position:absolute; left:0; right:0; bottom:0; z-index:5; display:flex; flex-direction:column; gap:8px; padding:12px; }
+  #botones { display:flex; gap:10px; justify-content:center; flex-wrap:wrap; }
+  button.acc { font-family:inherit; font-size:clamp(15px,2.4vw,19px); font-weight:700; color:#fff; border:none; border-radius:14px;
+    padding:16px 22px; min-width:130px; min-height:56px; cursor:pointer; transition:transform .1s, filter .1s; touch-action:manipulation; }
+  button.acc:active { transform:scale(.95); filter:brightness(1.25); }
+  button.acc:disabled { opacity:.35; cursor:default; transform:none; }
+  .b-atk { background:linear-gradient(180deg,#e05545,#a83226); }
+  .b-esp { background:linear-gradient(180deg,#7c5ccc,#5436a0); }
+  .b-cur { background:linear-gradient(180deg,#3fae6a,#27754a); }
+  #log { text-align:center; min-height:24px; font-size:clamp(14px,2vw,18px); color:#ffe9b0; text-shadow:0 2px 6px #000; }
+  #turno { position:absolute; top:10px; left:50%; transform:translateX(-50%); z-index:5; background:rgba(20,20,40,.75);
+    border:1px solid #34346a; border-radius:999px; padding:6px 18px; font-size:15px; letter-spacing:1px; }
+  .fin h2 { font-size:clamp(36px,7vw,72px); letter-spacing:3px; }
+  .fin .vic { color:#ffd76e; text-shadow:0 0 30px rgba(255,200,80,.5); }
+  .fin .der { color:#ff6a5e; text-shadow:0 0 30px rgba(255,80,60,.4); }
+  .fin button { margin-top:10px; }
+  .credito { position:absolute; bottom:8px; right:14px; font-size:12px; color:#55557d; z-index:6; }
+  #scrSel, #scrFin { background:rgba(8,8,18,.92); }
+</style>
+</head>
+<body>
+<div id="wrap">
+  <canvas id="cv"></canvas>
+
+  <div id="turno" class="hidden">Turno <span id="nTurno">1</span></div>
+
+  <div id="ui" class="hidden">
+    <div id="log">¡Elegí tu acción!</div>
+    <div id="botones">
+      <button class="acc b-atk" id="bAtk">⚔️ Atacar</button>
+      <button class="acc b-esp" id="bEsp">✨ Especial</button>
+      <button class="acc b-cur" id="bCur">💚 Curar</button>
+    </div>
+  </div>
+
+  <div id="scrSel" class="screen">
+    <h1 class="titulo">ARENA BIRRIA</h1>
+    <div class="sub">Generado por Claude Fable 5 · Elegí tu héroe</div>
+    <div class="heroes" id="heroes"></div>
+  </div>
+
+  <div id="scrFin" class="screen fin hidden">
+    <h2 id="finTit" class="vic">¡VICTORIA!</h2>
+    <div class="sub" id="finSub"></div>
+    <div id="finBtns" style="display:flex;gap:14px;flex-wrap:wrap;justify-content:center"></div>
+  </div>
+
+  <div class="credito">3° Degustación Birria · Claude Fable 5</div>
+</div>
+
+<script>
+"use strict";
+// ============ Setup ============
+const cv = document.getElementById('cv'), ctx = cv.getContext('2d');
+const W = 960, H = 540;
+function resize(){
+  const r = Math.min(innerWidth/W, innerHeight/H);
+  cv.width = W; cv.height = H;
+  cv.style.width = (W*r)+'px'; cv.style.height = (H*r)+'px';
+}
+addEventListener('resize', resize); resize();
+
+const $ = id => document.getElementById(id);
+const rnd = (a,b)=> a + Math.random()*(b-a);
+const ri = (a,b)=> Math.floor(rnd(a,b+1));
+
+// ============ Audio sintetizado ============
+let AC = null;
+function ac(){ if(!AC) AC = new (window.AudioContext||window.webkitAudioContext)(); if(AC.state==='suspended') AC.resume(); return AC; }
+function tono(f0,f1,dur,tipo,vol=0.18,delay=0){
+  try{
+    const a=ac(), o=a.createOscillator(), g=a.createGain(), t=a.currentTime+delay;
+    o.type=tipo; o.frequency.setValueAtTime(f0,t); o.frequency.exponentialRampToValueAtTime(Math.max(f1,1),t+dur);
+    g.gain.setValueAtTime(vol,t); g.gain.exponentialRampToValueAtTime(0.001,t+dur);
+    o.connect(g); g.connect(a.destination); o.start(t); o.stop(t+dur);
+  }catch(e){}
+}
+function ruido(dur,vol=0.2){
+  try{
+    const a=ac(), n=a.sampleRate*dur, buf=a.createBuffer(1,n,a.sampleRate), d=buf.getChannelData(0);
+    for(let i=0;i<n;i++) d[i]=(Math.random()*2-1)*(1-i/n);
+    const s=a.createBufferSource(), g=a.createGain(); s.buffer=buf;
+    g.gain.value=vol; s.connect(g); g.connect(a.destination); s.start();
+  }catch(e){}
+}
+const snd = {
+  golpe(){ tono(180,60,0.15,'square',0.22); ruido(0.1,0.15); },
+  magia(){ tono(600,1400,0.3,'sawtooth',0.12); tono(900,300,0.35,'sine',0.1,0.05); },
+  cura(){ tono(440,880,0.25,'sine',0.15); tono(660,1320,0.3,'sine',0.1,0.12); },
+  rugido(){ tono(120,40,0.7,'sawtooth',0.25); tono(80,30,0.8,'square',0.15,0.05); ruido(0.4,0.2); },
+  victoria(){ [523,659,784,1047].forEach((f,i)=>tono(f,f,0.28,'square',0.12,i*0.16)); },
+  derrota(){ [392,330,262,196].forEach((f,i)=>tono(f,f*0.97,0.35,'triangle',0.14,i*0.2)); },
+};
+
+// ============ Datos ============
+const HEROES = [
+  { id:'caballero', nombre:'Caballero', desc:'Tanque. Aguanta todo y pega fuerte con el escudo.',
+    hp:150, atk:[13,19], esp:{nombre:'Embate del Bastión', dmg:[30,42], txt:'¡EMBATE DEL BASTIÓN!'}, cura:[24,34], color:'#6ea8ff' },
+  { id:'maga', nombre:'Maga', desc:'Daño puro. Frágil pero devastadora con su tormenta arcana.',
+    hp:95, atk:[16,24], esp:{nombre:'Tormenta Arcana', dmg:[44,60], txt:'¡TORMENTA ARCANA!'}, cura:[18,26], color:'#c77dff' },
+  { id:'picara', nombre:'Pícara', desc:'Veloz. Golpes dobles y una danza de dagas letal.',
+    hp:115, atk:[9,14], doble:true, esp:{nombre:'Danza de Dagas', dmg:[36,50], txt:'¡DANZA DE DAGAS!'}, cura:[20,30], color:'#7dffb0' },
+];
+const JEFES = [
+  { nombre:'El Devorador', hp:220, atk:[12,20], furiaAtk:[20,30] },
+  { nombre:'La Sombra Voraz', hp:280, atk:[15,24], furiaAtk:[24,36] },
+];
+
+// ============ Estado ============
+let estado = 'sel'; // sel | batalla | anim | fin
+let heroe=null, jefe=null, jefeIdx=0, cdEsp=0, turno=1, shake=0;
+let particulas=[], flotantes=[], flash=0, flashCol='#fff';
+let hx=260, hy=360, jx=700, jy=330, hLunge=0, jLunge=0, t=0;
+let estrellas=[];
+for(let i=0;i<90;i++) estrellas.push({x:Math.random()*W, y:Math.random()*H*0.55, r:Math.random()*1.6+0.4, p:Math.random()*6.28});
+
+// ============ Dibujo procedural de personajes ============
+function dHeroe(c,x,y,h,esc=1,bob=0){
+  c.save(); c.translate(x,y+bob); c.scale(esc,esc);
+  const col=h.color;
+  if(h.id==='caballero'){
+    c.fillStyle='#3a4a6a'; c.fillRect(-18,-10,36,46);            // cuerpo armadura
+    c.fillStyle=col; c.fillRect(-18,-10,36,8);                    // hombreras
+    c.fillStyle='#cfd8ea'; c.beginPath(); c.arc(0,-26,15,0,7); c.fill(); // casco
+    c.fillStyle='#0a0a14'; c.fillRect(-10,-30,20,7);              // visor
+    c.fillStyle='#8b9bb8'; c.fillRect(-34,-6,12,34);              // escudo
+    c.strokeStyle=col; c.lineWidth=2; c.strokeRect(-34,-6,12,34);
+    c.fillStyle='#dde'; c.fillRect(20,-34,5,42);                  // espada
+    c.fillStyle='#a87b2e'; c.fillRect(16,6,13,5);
+  } else if(h.id==='maga'){
+    c.fillStyle='#4a2a6a'; c.beginPath(); c.moveTo(-16,36); c.lineTo(16,36); c.lineTo(8,-8); c.lineTo(-8,-8); c.fill(); // túnica
+    c.fillStyle='#f0c9a8'; c.beginPath(); c.arc(0,-20,11,0,7); c.fill(); // cara
+    c.fillStyle=col; c.beginPath(); c.moveTo(-16,-26); c.lineTo(16,-26); c.lineTo(0,-52); c.fill(); // sombrero
+    c.fillRect(-18,-28,36,5);
+    c.strokeStyle='#8a5a2a'; c.lineWidth=4; c.beginPath(); c.moveTo(20,36); c.lineTo(24,-24); c.stroke(); // bastón
+    const g=Math.sin(t*0.1)*0.5+0.5;
+    c.fillStyle=col; c.globalAlpha=0.5+g*0.5; c.beginPath(); c.arc(24,-30,7+g*3,0,7); c.fill(); c.globalAlpha=1;
+  } else {
+    c.fillStyle='#2a4a3a'; c.fillRect(-14,-8,28,42);              // cuerpo
+    c.fillStyle='#f0c9a8'; c.beginPath(); c.arc(0,-20,11,0,7); c.fill();
+    c.fillStyle='#1a2a22'; c.beginPath(); c.arc(0,-24,11,Math.PI,0); c.fill(); // capucha
+    c.fillStyle=col; c.fillRect(-14,-8,28,5);                     // cinturón
+    c.fillStyle='#dde'; c.save(); c.translate(20,4); c.rotate(-0.5); c.fillRect(-2,-16,4,18); c.restore(); // daga
+    c.save(); c.translate(-20,4); c.rotate(0.5); c.fillRect(-2,-16,4,18); c.restore();
+  }
+  c.restore();
+}
+function dJefe(c,x,y,furia,esc=1,bob=0,idx=0){
+  c.save(); c.translate(x,y+bob); c.scale(esc,esc);
+  const base = furia ? '#c0392b' : (idx===0 ? '#5a3a8a' : '#2a2a3e');
+  const ojo = furia ? '#ffdd44' : '#ff5555';
+  // cuerpo masa
+  c.fillStyle=base;
+  c.beginPath(); c.moveTo(-55,50);
+  for(let i=0;i<=10;i++){ const a=Math.PI+(i/10)*Math.PI; c.lineTo(Math.cos(a)*55, Math.sin(a)*65+Math.sin(t*0.08+i)*4); }
+  c.lineTo(55,50); c.fill();
+  // púas
+  c.fillStyle = furia ? '#e74c3c' : '#7a5aaa';
+  for(let i=-2;i<=2;i++){ c.beginPath(); c.moveTo(i*22-8,-48); c.lineTo(i*22,-78-Math.abs(i)*-6); c.lineTo(i*22+8,-48); c.fill(); }
+  // ojos
+  for(const s of [-1,1]){
+    c.fillStyle=ojo; c.beginPath(); c.arc(s*22,-18,furia?11:9,0,7); c.fill();
+    c.fillStyle='#000'; c.beginPath(); c.arc(s*22,-18,4,0,7); c.fill();
+  }
+  // boca dientes
+  c.fillStyle='#1a0a1a'; c.beginPath(); c.ellipse(0,18,30,16+Math.sin(t*0.06)*3,0,0,7); c.fill();
+  c.fillStyle='#fff';
+  for(let i=-3;i<=3;i++){ c.beginPath(); c.moveTo(i*8-3,6); c.lineTo(i*8,16); c.lineTo(i*8+3,6); c.fill(); }
+  c.restore();
+}
+
+// ============ Fondo ============
+function fondo(){
+  const g=ctx.createLinearGradient(0,0,0,H);
+  g.addColorStop(0,'#0a0a1e'); g.addColorStop(0.6,'#16102e'); g.addColorStop(1,'#0c0c1a');
+  ctx.fillStyle=g; ctx.fillRect(0,0,W,H);
+  for(const e of estrellas){
+    ctx.globalAlpha=0.3+0.7*Math.abs(Math.sin(t*0.02+e.p));
+    ctx.fillStyle='#fff'; ctx.beginPath(); ctx.arc(e.x,e.y,e.r,0,7); ctx.fill();
+  }
+  ctx.globalAlpha=1;
+  // montañas
+  ctx.fillStyle='#1c1538';
+  ctx.beginPath(); ctx.moveTo(0,330);
+  for(let x=0;x<=W;x+=60) ctx.lineTo(x, 280+Math.sin(x*0.013)*45);
+  ctx.lineTo(W,330); ctx.lineTo(W,H); ctx.lineTo(0,H); ctx.fill();
+  ctx.fillStyle='#241a48';
+  ctx.beginPath(); ctx.moveTo(0,360);
+  for(let x=0;x<=W;x+=40) ctx.lineTo(x, 330+Math.sin(x*0.02+9)*30);
+  ctx.lineTo(W,H); ctx.lineTo(0,H); ctx.fill();
+  // piso con grilla en perspectiva
+  ctx.fillStyle='#120e24'; ctx.fillRect(0,400,W,H-400);
+  ctx.strokeStyle='rgba(124,92,204,0.35)'; ctx.lineWidth=1;
+  for(let i=0;i<=20;i++){ const x=i*W/20, cxm=W/2;
+    ctx.beginPath(); ctx.moveTo(cxm+(x-cxm)*0.3,400); ctx.lineTo(x,H); ctx.stroke(); }
+  for(let i=0;i<6;i++){ const y=400+Math.pow(i/5,1.6)*(H-400);
+    ctx.beginPath(); ctx.moveTo(0,y); ctx.lineTo(W,y); ctx.stroke(); }
+}
+
+// ============ HUD ============
+function barra(x,y,w,pct,col,nombre,hp,max){
+  ctx.fillStyle='rgba(10,10,25,0.8)'; ctx.fillRect(x-3,y-3,w+6,22);
+  ctx.fillStyle='#262648'; ctx.fillRect(x,y,w,16);
+  ctx.fillStyle=col; ctx.fillRect(x,y,w*Math.max(0,pct),16);
+  ctx.strokeStyle='#44447a'; ctx.strokeRect(x-3,y-3,w+6,22);
+  ctx.fillStyle='#fff'; ctx.font='bold 14px system-ui'; ctx.textAlign='left';
+  ctx.fillText(nombre, x, y-9);
+  ctx.textAlign='right'; ctx.fillText(Math.max(0,hp)+' / '+max, x+w, y-9);
+  ctx.textAlign='left';
+}
+
+// ============ Partículas y números ============
+function explota(x,y,col,n=18){ for(let i=0;i<n;i++) particulas.push({x,y,vx:rnd(-4,4),vy:rnd(-5,2),vida:rnd(20,40),col,r:rnd(2,5)}); }
+function numero(x,y,txt,col){ flotantes.push({x,y,txt,col,vida:60}); }
+
+// ============ Loop ============
+function loop(){
+  t++;
+  ctx.save();
+  if(shake>0){ ctx.translate(rnd(-shake,shake), rnd(-shake,shake)); shake*=0.85; if(shake<0.5) shake=0; }
+  fondo();
+  if(heroe){
+    const bobH=Math.sin(t*0.05)*4, bobJ=Math.sin(t*0.04+2)*5;
+    // sombras
+    ctx.fillStyle='rgba(0,0,0,0.4)';
+    ctx.beginPath(); ctx.ellipse(hx,hy+48,40,9,0,0,7); ctx.fill();
+    ctx.beginPath(); ctx.ellipse(jx,jy+58,70,13,0,0,7); ctx.fill();
+    dHeroe(ctx, hx+hLunge, hy, heroe, 1.5, bobH);
+    if(jefe.hp>0) dJefe(ctx, jx-jLunge, jy, jefe.furia, 1.15, bobJ, jefeIdx);
+    hLunge*=0.82; jLunge*=0.82;
+    barra(40,46,300, heroe.hp/heroe.max, '#3fae6a', heroe.nombre, heroe.hp, heroe.max);
+    barra(W-360,46,320, jefe.hp/jefe.max, jefe.furia?'#ff4433':'#c0392b', jefe.nombre+(jefe.furia?' 🔥 FURIA':''), jefe.hp, jefe.max);
+    if(cdEsp>0 && estado==='batalla'){ ctx.fillStyle='#9b8cff'; ctx.font='13px system-ui'; ctx.fillText('Especial lista en '+cdEsp+' turno'+(cdEsp>1?'s':''), 40, 84); }
+  }
+  for(const p of particulas){ p.x+=p.vx; p.y+=p.vy; p.vy+=0.2; p.vida--;
+    ctx.globalAlpha=Math.min(1,p.vida/15); ctx.fillStyle=p.col; ctx.beginPath(); ctx.arc(p.x,p.y,p.r,0,7); ctx.fill(); }
+  ctx.globalAlpha=1; particulas=particulas.filter(p=>p.vida>0);
+  for(const f of flotantes){ f.y-=1.2; f.vida--;
+    ctx.globalAlpha=Math.min(1,f.vida/20); ctx.fillStyle=f.col; ctx.font='bold 30px system-ui'; ctx.textAlign='center';
+    ctx.strokeStyle='#000'; ctx.lineWidth=4; ctx.strokeText(f.txt,f.x,f.y); ctx.fillText(f.txt,f.x,f.y); }
+  ctx.globalAlpha=1; ctx.textAlign='left'; flotantes=flotantes.filter(f=>f.vida>0);
+  if(flash>0){ ctx.globalAlpha=flash; ctx.fillStyle=flashCol; ctx.fillRect(0,0,W,H); ctx.globalAlpha=1; flash-=0.07; }
+  ctx.restore();
+  requestAnimationFrame(loop);
+}
+loop();
+
+// ============ Lógica de batalla ============
+const log = m => $('log').textContent = m;
+function setBotones(on){ ['bAtk','bEsp','bCur'].forEach(id=>$(id).disabled=!on); $('bEsp').disabled = !on || cdEsp>0; }
+const espera = ms => new Promise(r=>setTimeout(r,ms));
+
+async function accion(tipo){
+  if(estado!=='batalla') return;
+  estado='anim'; setBotones(false);
+  if(tipo==='atk'){
+    hLunge=70; await espera(180);
+    const golpes = heroe.doble ? 2 : 1;
+    for(let i=0;i<golpes;i++){
+      const d=ri(...heroe.atk); jefe.hp-=d;
+      snd.golpe(); shake=8; explota(jx,jy,'#ffcc66'); numero(jx,jy-90,'-'+d,'#ffd76e');
+      log(heroe.nombre+' golpea por '+d+(golpes>1?' (x'+(i+1)+')':'')+'.');
+      if(i<golpes-1) await espera(280);
+    }
+  } else if(tipo==='esp'){
+    flash=0.7; flashCol=heroe.color; snd.magia(); hLunge=50;
+    await espera(250);
+    const d=ri(...heroe.esp.dmg); jefe.hp-=d;
+    shake=14; explota(jx,jy,heroe.color,36); explota(jx,jy-40,'#ffffff',16);
+    numero(jx,jy-100,'-'+d,heroe.color); log(heroe.esp.txt+' ¡'+d+' de daño!');
+    cdEsp=3;
+  } else {
+    const c=ri(...heroe.cura); heroe.hp=Math.min(heroe.max,heroe.hp+c);
+    snd.cura(); flash=0.35; flashCol='#4dff9d'; explota(hx,hy-20,'#4dff9d',20);
+    numero(hx,hy-90,'+'+c,'#4dff9d'); log(heroe.nombre+' recupera '+c+' de vida.');
+  }
+  await espera(650);
+  // ¿muere el jefe?
+  if(jefe.hp<=0){ explota(jx,jy,'#ff6644',60); explota(jx,jy,'#ffdd66',40); shake=18; snd.victoria(); fin(true); return; }
+  // ¿entra en furia?
+  if(!jefe.furia && jefe.hp <= jefe.max*0.4){
+    jefe.furia=true; snd.rugido(); shake=20; flash=0.6; flashCol='#ff2200';
+    log('¡'+jefe.nombre+' ENTRA EN FURIA! 🔥'); explota(jx,jy,'#ff3322',50);
+    await espera(1100);
+  }
+  // turno del jefe
+  jLunge=80; await espera(200);
+  const atk = jefe.furia ? jefe.furiaAtk : jefe.atk;
+  const d=ri(...atk); heroe.hp-=d;
+  snd.golpe(); if(jefe.furia) snd.rugido(); shake=jefe.furia?14:8;
+  explota(hx,hy,'#ff5544'); numero(hx,hy-90,'-'+d,'#ff6a5e');
+  log(jefe.nombre+' te ataca: '+d+' de daño'+(jefe.furia?' 🔥':'')+'.');
+  await espera(700);
+  if(heroe.hp<=0){ snd.derrota(); fin(false); return; }
+  if(cdEsp>0) cdEsp--;
+  turno++; $('nTurno').textContent=turno;
+  estado='batalla'; setBotones(true);
+  log('Turno '+turno+'. ¡Elegí tu acción!');
+}
+$('bAtk').onclick=()=>accion('atk');
+$('bEsp').onclick=()=>accion('esp');
+$('bCur').onclick=()=>accion('cur');
+
+// ============ Pantallas ============
+function fin(victoria){
+  estado='fin';
+  setTimeout(()=>{
+    $('scrFin').classList.remove('hidden'); $('ui').classList.add('hidden'); $('turno').classList.add('hidden');
+    const tit=$('finTit'), sub=$('finSub'), btns=$('finBtns'); btns.innerHTML='';
+    if(victoria){
+      tit.textContent='¡VICTORIA!'; tit.className='vic';
+      sub.textContent='Venciste a '+jefe.nombre+' en '+turno+' turnos.';
+      if(jefeIdx===0){
+        const b2=document.createElement('button'); b2.className='acc b-esp'; b2.textContent='😈 Jefe final: La Sombra Voraz';
+        b2.onclick=()=>empezar(heroe.base, 1, true); btns.appendChild(b2);
+      } else {
+        sub.textContent='¡Derrotaste a los DOS jefes! Sos leyenda de la Arena Birria. ('+turno+' turnos)';
+      }
+    } else {
+      tit.textContent='DERROTA'; tit.className='der';
+      sub.textContent=jefe.nombre+' te devoró... pero la revancha es gratis.';
+    }
+    const br=document.createElement('button'); br.className='acc b-atk'; br.textContent='🔄 Jugar de nuevo';
+    br.onclick=()=>{ $('scrFin').classList.add('hidden'); $('scrSel').classList.remove('hidden'); estado='sel'; };
+    btns.appendChild(br);
+  }, victoria?900:600);
+}
+
+function empezar(base, idxJefe, conservar){
+  const j=JEFES[idxJefe];
+  heroe={...base, base, max:base.hp, hp: conservar? Math.min(base.hp, Math.max(40, heroe.hp+30)) : base.hp};
+  jefe={...j, max:j.hp, furia:false}; jefeIdx=idxJefe;
+  cdEsp=0; turno=1; $('nTurno').textContent=1;
+  $('scrSel').classList.add('hidden'); $('scrFin').classList.add('hidden');
+  $('ui').classList.remove('hidden'); $('turno').classList.remove('hidden');
+  estado='batalla'; setBotones(true);
+  snd.rugido();
+  log('¡'+j.nombre+' aparece! ('+j.hp+' HP) — ¡A pelear!');
+}
+
+// tarjetas de selección con mini-canvas
+const cont=$('heroes');
+HEROES.forEach(h=>{
+  const card=document.createElement('div'); card.className='card';
+  const mc=document.createElement('canvas'); mc.width=120; mc.height=120;
+  card.appendChild(mc);
+  card.insertAdjacentHTML('beforeend',
+    '<h3>'+h.nombre+'</h3><p>'+h.desc+'</p>'+
+    '<span class="stat">❤️ '+h.hp+'</span><span class="stat">⚔️ '+h.atk[0]+'–'+h.atk[1]+'</span>'+
+    '<span class="stat">✨ '+h.esp.nombre+'</span>');
+  card.addEventListener('click', ()=>{ ac(); empezar(h,0,false); });
+  cont.appendChild(card);
+  const mctx=mc.getContext('2d');
+  (function anim(){ mctx.clearRect(0,0,120,120); dHeroe(mctx,60,62,h,1.3,Math.sin(t*0.05)*3); requestAnimationFrame(anim); })();
+});
+
+// desbloqueo de audio en el primer toque (requisito de browsers)
+addEventListener('pointerdown', ()=>ac(), {once:true});
+</script>
+</body>
+</html>
