@@ -73,14 +73,12 @@
   .seccion-cab .pasaje{font-size:10.5px;color:var(--tinta3);font-style:italic;font-family:Georgia,serif;letter-spacing:.5px}
 
   /* ---- plato individual ---- */
-  .plato{display:grid;grid-template-columns:1fr auto;gap:14px;padding:11px 0;border-bottom:1px dashed rgba(42,31,18,.18);align-items:start}
+  .plato{padding:11px 0;border-bottom:1px dashed rgba(42,31,18,.18)}
   .plato:last-child{border-bottom:none}
   .plato-nombre{font-size:17px;font-weight:700;letter-spacing:.3px;line-height:1.15;color:var(--tinta)}
   .plato-nombre .tag{display:inline-block;margin-left:8px;font-size:9.5px;letter-spacing:1.5px;text-transform:uppercase;padding:2px 8px;border:1px solid;border-radius:999px;font-family:'Helvetica Neue',Arial,sans-serif;font-weight:700;vertical-align:middle;position:relative;top:-2px}
-  .plato-desc{margin-top:4px;font-size:13px;line-height:1.5;color:var(--tinta2);font-style:italic;max-width:54ch}
+  .plato-desc{margin-top:4px;font-size:13px;line-height:1.5;color:var(--tinta2);font-style:italic;max-width:60ch}
   .plato-desc b{font-style:normal;color:var(--tinta);font-weight:700}
-  .plato-precio{font-size:14px;font-weight:700;color:var(--tinta);font-family:Georgia,serif;text-align:right;white-space:nowrap;letter-spacing:.5px;padding-top:2px}
-  .plato-precio small{display:block;font-size:9.5px;font-weight:600;color:var(--tinta3);letter-spacing:1.5px;text-transform:uppercase;margin-top:2px;font-family:'Helvetica Neue',Arial,sans-serif}
 
   /* ---- platos destacados (con QR) ---- */
   .destacado{background:rgba(165,42,42,.04);border:1px solid rgba(165,42,42,.22);border-radius:8px;padding:14px 16px;margin:14px 0;display:grid;grid-template-columns:1fr 84px;gap:14px;align-items:center}
@@ -169,7 +167,7 @@
 
   <!-- ENTRADAS -->
   <section class="seccion">
-    <div class="seccion-cab"><div class="barra"></div><h2>Entradas</h2><span class="pasaje">para abrir el paladar · 1 min</span><div class="barra"></div></div>
+    <div class="seccion-cab"><div class="barra"></div><h2>Entradas</h2><span class="pasaje">para abrir el paladar</span><div class="barra"></div></div>
 
     <div class="destacado">
       <div>
@@ -181,25 +179,19 @@
     </div>
 
     <div class="plato">
-      <div>
-        <div class="plato-nombre">Visión sobre cualquier cosa <span class="tag" style="color:var(--azul);border-color:var(--azul)">Foto</span></div>
-        <div class="plato-desc">Una toma de tu cámara, salteada con interpretación: lectura de tickets, planos, pizarrones o etiquetas. Servido <b>al instante</b>, con guarnición de explicación clara.</div>
-      </div>
-      <div class="plato-precio">30 seg<small>en notebook</small></div>
+      <div class="plato-nombre">Visión sobre cualquier cosa <span class="tag" style="color:var(--azul);border-color:var(--azul)">Foto</span></div>
+      <div class="plato-desc">Una toma de tu cámara, salteada con interpretación: lectura de tickets, planos, pizarrones o etiquetas. Servido <b>al instante</b>, con guarnición de explicación clara.</div>
     </div>
 
     <div class="plato">
-      <div>
-        <div class="plato-nombre">Artifacts <span class="tag" style="color:var(--oro);border-color:var(--oro)">App en vivo</span></div>
-        <div class="plato-desc">Pedís y aparece: una calculadora, una ruleta para sortear, un juego para tu hijo. No te lo describe — <b>te lo entrega funcionando</b> al costado del chat.</div>
-      </div>
-      <div class="plato-precio">1 min<small>en notebook</small></div>
+      <div class="plato-nombre">Artifacts <span class="tag" style="color:var(--oro);border-color:var(--oro)">App en vivo</span></div>
+      <div class="plato-desc">Pedís y aparece: una calculadora, una ruleta para sortear, un juego para tu hijo. No te lo describe — <b>te lo entrega funcionando</b> al costado del chat.</div>
     </div>
   </section>
 
   <!-- PRINCIPALES -->
   <section class="seccion">
-    <div class="seccion-cab"><div class="barra"></div><h2>Principales</h2><span class="pasaje">para llevarte algo útil · 3 min</span><div class="barra"></div></div>
+    <div class="seccion-cab"><div class="barra"></div><h2>Principales</h2><span class="pasaje">para llevarte algo útil</span><div class="barra"></div></div>
 
     <div class="destacado">
       <div>
@@ -211,54 +203,39 @@
     </div>
 
     <div class="plato">
-      <div>
-        <div class="plato-nombre">Skills · documentos profesionales <span class="tag" style="color:var(--verde);border-color:var(--verde)">PowerPoint · Excel</span></div>
-        <div class="plato-desc">Le pedís una presentación, un informe, una planilla — y los entrega como <b>archivo real</b> (.pptx, .xlsx) listo para abrir en tu compu. Con tu estilo cuando se lo enseñás una vez.</div>
-      </div>
-      <div class="plato-precio">2 min<small>en notebook</small></div>
+      <div class="plato-nombre">Skills · documentos profesionales <span class="tag" style="color:var(--verde);border-color:var(--verde)">PowerPoint · Excel</span></div>
+      <div class="plato-desc">Le pedís una presentación, un informe, una planilla — y los entrega como <b>archivo real</b> (.pptx, .xlsx) listo para abrir en tu compu. Con tu estilo cuando se lo enseñás una vez.</div>
     </div>
 
     <div class="plato">
-      <div>
-        <div class="plato-nombre">MCP · conectado a tus datos <span class="tag" style="color:var(--azul);border-color:var(--azul)">Gmail · Drive</span></div>
-        <div class="plato-desc">El enchufe entre Claude y tus aplicaciones. Deja de ser un chat ciego: <b>lee tus mails, tu calendario, tu Drive</b> con tu permiso y a la vista. Servido bajo demanda.</div>
-      </div>
-      <div class="plato-precio">2 min<small>en notebook</small></div>
+      <div class="plato-nombre">MCP · conectado a tus datos <span class="tag" style="color:var(--azul);border-color:var(--azul)">Gmail · Drive</span></div>
+      <div class="plato-desc">El enchufe entre Claude y tus aplicaciones. Deja de ser un chat ciego: <b>lee tus mails, tu calendario, tu Drive</b> con tu permiso y a la vista. Servido bajo demanda.</div>
     </div>
   </section>
 
   <!-- ESPECIAL DE LA CASA -->
   <section class="seccion">
-    <div class="seccion-cab"><div class="barra"></div><h2>Especial de la Casa</h2><span class="pasaje">para los curiosos · 3 min</span><div class="barra"></div></div>
+    <div class="seccion-cab"><div class="barra"></div><h2>Especial de la Casa</h2><span class="pasaje">para los curiosos</span><div class="barra"></div></div>
 
     <div class="plato">
-      <div>
-        <div class="plato-nombre">Subagentes en paralelo <span class="tag" style="color:var(--oro);border-color:var(--oro)">Brigada de cocina</span></div>
-        <div class="plato-desc">Para trabajos grandes, Claude se divide en ayudantes que trabajan a la vez: uno investiga, otro construye, otro revisa. <b>Así se preparó este stand entero</b>, en un día.</div>
-      </div>
-      <div class="plato-precio">3 min<small>en notebook</small></div>
+      <div class="plato-nombre">Subagentes en paralelo <span class="tag" style="color:var(--oro);border-color:var(--oro)">Brigada de cocina</span></div>
+      <div class="plato-desc">Para trabajos grandes, Claude se divide en ayudantes que trabajan a la vez: uno investiga, otro construye, otro revisa. <b>Así se preparó este stand entero</b>, en un día.</div>
     </div>
 
     <div class="plato">
-      <div>
-        <div class="plato-nombre">Claude Code <span class="tag" style="color:var(--acento);border-color:var(--acento)">El taller</span></div>
-        <div class="plato-desc">El plato del chef. No te tira código suelto: <b>crea el proyecto, lo ejecuta, ve sus errores y los corrige</b> hasta que funciona. Todo lo que probás hoy salió de acá.</div>
-      </div>
-      <div class="plato-precio">5 min<small>en notebook</small></div>
+      <div class="plato-nombre">Claude Code <span class="tag" style="color:var(--acento);border-color:var(--acento)">El taller</span></div>
+      <div class="plato-desc">El plato del chef. No te tira código suelto: <b>crea el proyecto, lo ejecuta, ve sus errores y los corrige</b> hasta que funciona. Todo lo que probás hoy salió de acá.</div>
     </div>
 
     <div class="plato">
-      <div>
-        <div class="plato-nombre">Claude usando tu Chrome <span class="tag" style="color:var(--azul);border-color:var(--azul)">Computer use</span></div>
-        <div class="plato-desc">Le mostrás un navegador y <b>navega como vos</b>: mueve el mouse, busca, compara, completa formularios. Los pasos aburridos de internet los hace él, paso a paso y con tu permiso.</div>
-      </div>
-      <div class="plato-precio">3 min<small>en notebook</small></div>
+      <div class="plato-nombre">Claude usando tu Chrome <span class="tag" style="color:var(--azul);border-color:var(--azul)">Computer use</span></div>
+      <div class="plato-desc">Le mostrás un navegador y <b>navega como vos</b>: mueve el mouse, busca, compara, completa formularios. Los pasos aburridos de internet los hace él, paso a paso y con tu permiso.</div>
     </div>
   </section>
 
   <!-- POSTRES -->
   <section class="seccion">
-    <div class="seccion-cab"><div class="barra"></div><h2>Postres</h2><span class="pasaje">para llevarte el sabor · sin tiempo · solo</span><div class="barra"></div></div>
+    <div class="seccion-cab"><div class="barra"></div><h2>Postres</h2><span class="pasaje">para llevarte el sabor</span><div class="barra"></div></div>
 
     <div class="destacado">
       <div>
@@ -270,11 +247,8 @@
     </div>
 
     <div class="plato">
-      <div>
-        <div class="plato-nombre">Memoria y Proyectos <span class="tag" style="color:var(--verde);border-color:var(--verde)">Te conoce</span></div>
-        <div class="plato-desc">Para que cada conversación nueva no arranque de cero: <b>se acuerda de tu nombre, tu negocio y dónde quedaron</b>. Vos elegís qué recuerda y qué olvidar.</div>
-      </div>
-      <div class="plato-precio">cortesía<small>en claude.ai</small></div>
+      <div class="plato-nombre">Memoria y Proyectos <span class="tag" style="color:var(--verde);border-color:var(--verde)">Te conoce</span></div>
+      <div class="plato-desc">Para que cada conversación nueva no arranque de cero: <b>se acuerda de tu nombre, tu negocio y dónde quedaron</b>. Vos elegís qué recuerda y qué olvidar.</div>
     </div>
   </section>
 
