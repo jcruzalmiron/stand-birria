@@ -3,78 +3,83 @@
 > Frase central (siempre se cierra con esto):
 > **"Mientras el resto conversa, Claude construye."**
 
+La experiencia tiene **dos capas**, y el guion las recorre en orden:
+
+1. **Capa wow** → algo que se siente imposible de tener "recién hecho": el arcade **SHIP IT!** en su celu (QR) o el JRPG **Arena Birria** en la pantalla grande.
+2. **Capa comprensión** → el mensaje honesto: Claude no es magia ni solo chat; el valor está en armar el **stack** correcto (Prompt · Skill · MCP · Agents · Claude Code) según el problema.
+
+La gracia: la capa 2 ya viene contrabandeada dentro de la capa 1 — en SHIP IT! los módulos del stack son power-ups que cambian el juego, y el final muestra el mapa mental.
+
 ---
 
 ## Guion de 5 minutos (grupo de paso)
 
 **1. Gancho (30 seg)**
-- "¿Viste que todo el mundo habla con la IA? Bueno, acá no habla: **construye**. Mirá la pantalla."
-- Señalar la pantalla de espera (terminal tipeando). "Eso que ves es Claude Code generando apps en vivo. Lo que te voy a mostrar ahora **no existía hace un minuto**."
+- "¿Viste que todo el mundo chatea con la IA? Acá no chatea: **construye**. Sacá el celu y escaneá esto." → QR de SHIP IT!
+- Mientras escanean: "90 segundos, un pulgar. Cada pedido que atrapás construye un edificio."
 
-**2. Demo (3 min)**
-- Abrir **Arena Birria** (el RPG). "Este juego completo —personajes, sonido, animaciones— lo generó Claude con un solo pedido. Probalo." → Que la persona elija héroe y juegue 2-3 turnos.
-- Mientras juega: "Cero imágenes descargadas, cero programadores. Un archivo que se abre con doble clic."
+**2. Juegan (2 min)**
+- Los dejás jugar. No expliques nada hasta que termine la run.
+- Cuando agarran un power-up, una sola línea: "Eso que agarraste existe de verdad: así se llama la pieza que conecta Claude con tus datos."
 
-**3. Ecosistema (1 min)**
-- "¿Y esto para qué sirve más allá del juego? Lo mismo que armó este juego arma el sistema de turnos de tu peluquería, las comandas de tu restaurante o el stock de tu kiosco." → Mostrar 10 segundos de la mini-app que corresponda.
-- "Corre con **Claude Fable 5**, el modelo más avanzado que existe hoy, lanzado hace tres días."
+**3. La vuelta honesta (1.5 min)**
+- Al terminar, el juego les muestra "TU STACK". Ahí entrás:
+- "Esto no es chamuyo de juego: usar bien a Claude es exactamente esto. Para una app chica alcanza un buen pedido y Claude Code. Si tu negocio tiene datos en otra app, entra MCP. Si la tarea es enorme, se reparte entre agentes. **El valor está en elegir las piezas, no en un prompt mágico.**"
 
 **4. Cierre (30 seg)**
-- "Si te quedó una idea dando vueltas, anotala y pedísela a Claude esta noche. Acordate de esto:"
+- "Este juego, el de la pantalla y todo lo que ves acá se construyó así, con ese stack, en un día."
 - **"Mientras el resto conversa, Claude construye."**
 
 ---
 
 ## Guion de 15 minutos (grupo interesado)
 
-**1. Gancho (2 min)**
-- Igual que arriba, pero sumar contexto: "Hasta hace poco, 'usar IA' era chatear. Hoy la IA **hace**: escribe el programa, lo prueba y te lo entrega funcionando."
-- Pregunta al grupo: "¿Quién tiene un negocio o un laburo con papeles, turnos o stock?" (anotar mentalmente para el paso 3).
+**1. Gancho (2 min)** — igual que arriba, con SHIP IT! en los celus de todos a la vez (es multijugador de hecho: comparan puntajes).
 
-**2. Demo estrella: Arena Birria (5 min)**
-- Seguir el guion del RPG (abajo). Dejar jugar a más de una persona, mostrar la fase de furia del jefe y el segundo jefe.
+**2. Demo grande: Arena Birria (4 min)**
+- En la pantalla de 55": JRPG con party de 3, jefe con fases, música chiptune. "Cero imágenes, cero archivos de audio: todo está dibujado y sintetizado por código que escribió Claude."
+- Dejá que un visitante juegue una ronda. Mostrá el jefe entrando en furia.
 
-**3. "Pedila en vivo" (5 min)**
-- Al que dijo que tiene negocio: "¿Qué tenés vos? ¿Peluquería, restaurante, kiosco?" → Abrir la mini-app correspondiente **como si se generara en ese momento**: "Esto es lo que Claude te devuelve si se lo pedís con esas palabras."
-- Recorrer la app: agregar un turno / mover una comanda / registrar una venta. Que lo toque el visitante, no vos.
-- Si nadie tiene negocio: abrir **Gastos del Evento**. "¿Cuántas veces terminaron una juntada peleando por quién pagó qué? Esto lo resuelve con las transferencias mínimas."
+**3. Capa comprensión con ejemplos reales (5 min)**
+- "¿Alguien tiene un negocio?" → abrí la mini-app del rubro (peluquería / restaurante / kiosco).
+- El punto NO es "esto se hace con un prompt". El punto es el criterio:
+  - Turnera de peluquería → *"esto salió con un pedido claro + Claude Code, nada más"*.
+  - Comandas con delivery → *"acá el prompt solo no alcanza: hace falta MCP para tocar los pedidos reales"*.
+  - "¿Y todo este stand?" → *"tarea multifrente: subagentes en paralelo + una skill de calidad visual + Claude Code"*.
+- Señalá la terminal de la pantalla principal: está contando exactamente ese criterio en loop.
 
-**4. Ecosistema y cierre (3 min)**
-- "Todo esto corre sobre **Claude Fable 5** (junio 2026). Funciona en español perfecto, entiende lo que le pedís como se lo dirías a una persona, y lo que genera es tuyo: un archivo que abrís en cualquier compu."
-- Responder preguntas (ver abajo).
-- Cierre: **"Mientras el resto conversa, Claude construye."**
+**4. Preguntas + cierre (3 min)** — respuestas abajo. Cerrar siempre con la frase central.
 
 ---
 
-## Guion específico de la demo del RPG
+## Glosario rápido (para el operador del stand)
 
-1. **Antes de abrir**: "Este juego **no existía hace un minuto**. Alguien le pidió a Claude 'armame un RPG con tres héroes y un jefe' y esto es lo que devolvió. Un solo archivo, sin internet."
-2. **Abrir** `demos/arena-rpg/index.html` (F11 para pantalla completa). Subir volumen.
-3. **Que elija héroe el visitante** (a los chicos les encanta la Maga; el Caballero perdona más errores).
-4. Durante la batalla, narrar lo invisible:
-   - "Los personajes están **dibujados con código**, no hay ni una imagen."
-   - "El sonido también: son ondas sintetizadas en el momento, no hay archivos de audio."
-   - Cuando el jefe entra en furia: "Mirá, cambió de fase. Esa lógica también la escribió Claude."
-5. **Tras la victoria**: ofrecer el jefe secreto ("La Sombra Voraz") si hay tiempo, o pasar al remate.
-6. **El remate de negocio** (no saltearlo nunca):
-   > "Ahora imaginá que en vez de un juego es el **sistema de turnos de tu peluquería**. El mismo pedido, las mismas ganas, cero programadores."
-   → Abrir la mini-app del rubro del visitante.
+| Pieza | Qué es | Analogía de mostrador |
+|---|---|---|
+| **Prompt** | El encargo: qué, para quién, con qué límites | El pedido bien tomado |
+| **Skill** | Forma de trabajar reusable | La receta de la casa |
+| **MCP** | Conexión a datos y apps externas | El enchufe a tu sistema |
+| **Agents** | Subagentes que se reparten trabajo | La brigada de cocina |
+| **Claude Code** | Donde se implementa, prueba y corrige | El taller con herramientas |
 
 ---
 
 ## Respuestas preparadas
 
 **"¿GPT no hace lo mismo?"**
-> "Los chats te responden; esto **construye y entrega**. Claude Code escribe el programa, lo prueba, corrige sus propios errores y te deja el archivo funcionando. Y Fable 5, que salió hace tres días, es hoy el modelo más capaz que podés usar. La diferencia la viste recién: no te conté el juego, lo jugaste."
+> "Los chats responden; esto **construye y entrega**: escribe el código, lo ejecuta, ve los errores y los corrige solo. Y lo que viste del stack — skills, MCP, agentes — es un ecosistema de trabajo, no una caja de texto. La diferencia no te la cuento: la acabás de jugar."
 
 **"¿Cuánto cuesta?"**
-> "Hay plan gratuito para chatear con Claude, y los planes pagos arrancan en el orden de los 20 dólares por mes, que incluyen Claude Code. Para un negocio, compará: una sola de estas apps hecha a medida te costaría mucho más que un año de suscripción."
+> "Hay plan gratuito para chatear, y los planes con Claude Code arrancan en el orden de los 20 dólares al mes. Para dimensionar: una sola app a medida como las del stand te costaría más que un año de suscripción."
 
-**"¿Es seguro? ¿Qué pasa con mis datos?"**
-> "Anthropic, la empresa detrás de Claude, se especializa justamente en seguridad de IA. En los planes de empresa tus datos no se usan para entrenar modelos. Y ojo con el detalle de hoy: todas estas demos funcionan **sin internet** — el archivo es tuyo, queda en tu compu, no sube nada a ningún lado."
+**"¿Es seguro? ¿Y mis datos?"**
+> "Anthropic se especializa en seguridad de IA; en planes de empresa tus datos no entrenan modelos. Y un detalle de hoy: todo lo de este stand corre **sin internet** — son archivos tuyos, en tu máquina. MCP, cuando lo usás, conecta solo lo que vos autorizás."
 
 **"¿Funciona en español?"**
-> "Lo estás viendo: todo lo de este stand se pidió y se generó en castellano, con voseo incluido. Le podés hablar como le hablás a un empleado: 'armame una agenda de turnos para mi peluquería' — y eso exacto fue el pedido de una de estas apps."
+> "Todo lo que viste se pidió y generó en castellano, con voseo. Le hablás como a una persona de tu equipo."
+
+**"¿Esto reemplaza a los programadores?"**
+> "Los multiplica. Lo que viste necesita igual criterio humano: definir el problema, elegir el stack, validar el resultado. Esa habilidad — saber armar las piezas — es justamente lo que el stand intenta enseñar."
 
 ---
 

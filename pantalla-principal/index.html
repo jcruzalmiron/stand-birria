@@ -21,6 +21,10 @@
   @keyframes bl{50%{opacity:0}}
   .esquina{position:fixed;bottom:24px;right:30px;font-size:clamp(13px,1.3vw,17px);color:#555;letter-spacing:1px}
   .esquina b{color:#9d82e8}
+  .qr{position:fixed;bottom:24px;left:30px;display:flex;align-items:center;gap:14px}
+  .qr .marco{width:92px;height:92px;border:2px dashed #3a3a5a;border-radius:12px;display:flex;align-items:center;justify-content:center;color:#44446a;font-size:11px;text-align:center;line-height:1.3}
+  .qr .txt{font-size:clamp(13px,1.4vw,17px);color:#8a83b8;line-height:1.45}
+  .qr .txt b{color:#5fd9ff}
 </style>
 </head>
 <body>
@@ -32,16 +36,19 @@
     </div>
     <div class="tbody" id="tb"></div>
   </div>
+  <div class="qr">
+    <div class="marco">pegá acá el<br>QR impreso</div>
+    <div class="txt"><b>📱 SHIP IT!</b> — escaneá y jugá<br>el arcade en tu celu · 90 seg</div>
+  </div>
   <div class="esquina">3° Degustación Birria · <b>Claude Fable 5</b></div>
 
 <script>
 const GUION=[
-  ['$ claude "armame un juego RPG con tres héroes y un jefe final"','Analizando el pedido...','Generando arena-rpg/index.html (1 archivo, 0 dependencias)','✔ Listo en 41s — abrilo con doble clic'],
-  ['$ claude "necesito una agenda de turnos para mi peluquería"','Diseñando calendario semanal + lista de clientes...','Creando turnos-peluqueria.html · dark mode · mobile-first','✔ App lista — sin instalar nada'],
-  ['$ claude "un tablero de comandas para la parrilla"','Pendiente → En cocina → Listo','Generando pedidos-restaurante.html con alertas de demora','✔ Tablero funcionando'],
-  ['$ claude "control de stock para el kiosco, con alertas"','Detectando productos por agotarse...','Creando stock-kiosco.html · registro de venta en un toque','✔ Stock bajo control'],
-  ['$ claude "dividí los gastos del asado entre los cuatro"','Calculando transferencias mínimas...','Juan → Flor $8.250 · Tomi → Meli $4.100','✔ Todos a mano en 2 transferencias'],
-  ['$ claude "animá las estrellas del fondo y agregale sonido"','Sintetizando audio con osciladores WebAudio...','Sin archivos de sonido, sin internet, todo generado','✔ Hecho — pasá por el stand y pedí el tuyo'],
+  ['$ claude "armame un JRPG con party de 3 héroes y dos jefes"','Prompt recibido · activando skill de game-feel...','Sprites por código, chiptune WebAudio, 0 assets externos','✔ arena-rpg listo — está corriendo en este stand'],
+  ['$ claude "una agenda de turnos para mi peluquería"','Caso chico: alcanza con prompt + Claude Code','turnos-peluqueria.html · dark · mobile-first · ARS','✔ App lista — sin instalar nada, sin internet'],
+  ['$ claude "comandas de cocina con los pedidos de mi app de delivery"','Esto toca datos vivos → se suma MCP al stack','Conectando fuente de pedidos · tablero en tiempo real','✔ El prompt solo no alcanzaba: el stack sí'],
+  ['$ claude "preparame TODO el stand para mañana"','Tarea multifrente → subagentes en paralelo','agente 1: juego · agente 2: apps · agente 3: guion y QA','✔ Entrega grande coordinada — así se armó esto'],
+  ['$ claude "un arcade para que la gente juegue desde el QR"','Generando SHIP IT! · un pulgar · 90 segundos','Los 5 módulos del stack son power-ups jugables','✔ Escaneá el QR del stand y probalo en tu celu'],
 ];
 const tb=document.getElementById('tb');
 let bloque=0;

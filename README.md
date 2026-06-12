@@ -1,46 +1,60 @@
 # Stand "3° Degustación Birria" — Manual de operación
 
 **Concepto:** *Mientras el resto conversa, Claude construye.*
+**Estructura:** dos capas — **wow** (juegos generados en vivo) y **comprensión** (el stack real de Claude: Prompt · Skill · MCP · Agents · Claude Code).
 Todo es HTML autocontenido: funciona **sin internet**, se abre con **doble clic** en Chrome.
+
+## Piezas principales
+
+| Pieza | Archivo | Rol |
+|---|---|---|
+| ⭐ **SHIP IT!** (QR / celular) | `demos/claude-quest/index.html` | La experiencia principal del visitante: arcade de 90 seg, un pulgar, donde los 5 módulos del stack son power-ups. Termina con el mapa mental. |
+| **Arena Birria** (JRPG) | `demos/arena-rpg/index.html` | Demo wow de pantalla grande: party de 3 héroes, 2 jefes con fases, chiptune sintetizado, sprites por código. |
+| **Pantalla de espera** | `pantalla-principal/index.html` | Frase central + terminal que narra en loop el criterio de stack + lugar para pegar el QR impreso. |
+| **Cartel industrias** | `pantalla-principal/industrias.html` | Rotativo de casos por rubro (tablet secundaria). |
+| Mini-apps de negocio | `demos/negocio-en-vivo/*.html` | Apoyo de la capa comprensión: peluquería (prompt+Code), restaurante (entra MCP), kiosco. |
+| Gastos del evento | `demos/gastos-evento/index.html` | Demo de mano para curiosos. |
+| Guion | [guion/GUION.md](guion/GUION.md) | Guiones de 5 y 15 min, glosario y objeciones. |
 
 ## Qué abrir en qué pantalla
 
-| Pantalla | Archivo | Cuándo |
-|---|---|---|
-| Monitor 55" | `pantalla-principal/index.html` | Siempre que no haya demo activa (pantalla de espera con terminal animada) |
-| Monitor 55" | `demos/arena-rpg/index.html` | Demo estrella, en vivo con el visitante |
-| Monitor 55" | `demos/negocio-en-vivo/*.html` | Dinámica "pedila en vivo" según el rubro del visitante |
-| Tablet / 2.ª pantalla | `pantalla-principal/industrias.html` | Cartel rotativo permanente (cicla solo cada 8 seg) |
-| Tablet | `demos/gastos-evento/index.html` | Demo de mano para curiosos generales |
+- **Monitor 55"** → `pantalla-principal/index.html` en F11 (espera) · cambiar a `arena-rpg` o mini-apps durante la demo (tener pestañas abiertas, `Ctrl+Tab`).
+- **Tablet de apoyo** → `pantalla-principal/industrias.html`.
+- **Celular del visitante** → SHIP IT! vía QR (ver abajo).
 
-> Tip: dejá **todas las pestañas ya abiertas** en Chrome y cambiá con `Ctrl+Tab` — el efecto "se generó recién" no se rompe.
+## El QR de SHIP IT! (importante, hacer ANTES del evento)
+
+El juego es un único archivo, pero un QR necesita una **URL accesible desde el celular del visitante**. Opciones, de mejor a peor:
+
+1. **Publicarlo** (GitHub Pages / Netlify Drop / Vercel): arrastrás la carpeta `demos/claude-quest/` y obtenés una URL pública. El celular del visitante usa SUS datos móviles → no dependés del wifi del evento. **Recomendada.**
+2. **Hotspot local**: una notebook con `python -m http.server 8080` + hotspot del teléfono del stand; el QR apunta a `http://<ip-local>:8080/demos/claude-quest/`. Funciona sin internet, pero el visitante debe conectarse a tu red.
+3. Generar el QR con cualquier generador (apuntando a la URL elegida), **imprimirlo grande** y pegarlo en el marco punteado que muestra la pantalla de espera, más uno en el mostrador.
+
+> Probalo desde un celular real antes del evento: tap, arrastre, sonido y pantalla final.
+> Tip: `index.html?t=30` hace runs de 30 segundos si hay fila de gente.
 
 ## Orden de demos según el visitante
 
-- **Chico / joven** → `arena-rpg` primero. Que juegue él/ella. Después el remate: "imaginá que en vez de un juego es el negocio de tus viejos".
-- **Adulto con negocio** → preguntá el rubro y abrí directo su mini-app:
-  - Peluquería / estética / consultorio → `turnos-peluqueria.html`
-  - Restaurante / bar / rotisería → `pedidos-restaurante.html`
-  - Kiosco / almacén / comercio → `stock-kiosco.html`
-- **Curioso general / grupo de amigos** → `gastos-evento` ("¿quién pagó el asado?"), después el RPG si engancha.
-
-El guion completo (5 y 15 minutos, remates y respuestas a objeciones) está en [guion/GUION.md](guion/GUION.md).
+- **Cualquiera con celular** → QR de SHIP IT! primero. Es la pieza que se llevan puesta.
+- **Chico / joven** → Arena Birria en la pantalla grande después del QR.
+- **Adulto con negocio** → su mini-app + la explicación de stack del guion ("para esto alcanza prompt+Code; para aquello entra MCP").
+- **Curioso general** → gastos del evento o SHIP IT! de nuevo (van a querer mejorar el puntaje).
 
 ## Checklist pre-evento
 
-- [ ] Copiar la carpeta `stand-birria/` completa a **las dos máquinas** (y a un pendrive de respaldo).
-- [ ] Abrir cada HTML una vez y verificar que carga sin errores (F12 → consola limpia).
-- [ ] **Probar el audio** del RPG: tocar la pantalla/clic una vez (los browsers bloquean el sonido hasta la primera interacción) y verificar volumen del monitor.
-- [ ] **Probar touch** en la tablet: botones del RPG, mover comandas, registrar una venta en el kiosco.
-- [ ] Chrome en **modo presentación: F11** en el monitor de 55" (salir con F11 también).
-- [ ] **Brillo al máximo** en todas las pantallas; desactivar suspensión/protector de pantalla (Windows: Configuración → Energía → pantalla "Nunca").
-- [ ] Desactivar notificaciones (Windows: Asistente de concentración / No molestar).
-- [ ] Cargar tablet al 100% y llevar cargador.
-- [ ] Dejar `pantalla-principal/index.html` corriendo en el monitor y `industrias.html` en la tablet antes de que llegue la gente.
+- [ ] Publicar SHIP IT! y **probar el QR desde 2 celulares distintos** (Android + iPhone).
+- [ ] Imprimir el QR (mínimo A5) y pegarlo en el marco de la pantalla de espera.
+- [ ] Copiar la carpeta `stand-birria/` a las dos máquinas + pendrive de respaldo.
+- [ ] Abrir cada HTML y verificar consola limpia (F12).
+- [ ] Probar audio del JRPG (el sonido arranca con el primer clic/tap — los browsers lo bloquean antes).
+- [ ] Probar touch en la tablet (JRPG, comandas, kiosco).
+- [ ] Chrome en F11 en el 55", `Ctrl+0` de zoom, brillo al máximo.
+- [ ] Desactivar suspensión de pantalla y notificaciones en todas las máquinas.
+- [ ] Cargar tablet y llevar cargadores.
 
 ## Si algo falla
 
-- **No hay sonido** → hacé un clic en la página (desbloquea WebAudio) y revisá el volumen del sistema.
-- **Se ve cortado en el 55"** → F11 (pantalla completa) y `Ctrl+0` para resetear el zoom.
-- **Se tildó una demo** → F5. Todas arrancan de cero al instante, no dependen de nada.
-- **No hay wifi** → no importa: nada de esta carpeta usa internet.
+- **No hay sonido** → un clic/tap en la página lo desbloquea; revisar volumen del sistema.
+- **El QR no carga** → plan B: hotspot local (opción 2 de arriba); plan C: pasar el juego por la tablet del stand.
+- **Algo se tildó** → F5. Todo arranca de cero al instante.
+- **No hay wifi** → las pantallas y demos locales no lo necesitan; solo el QR depende de la URL publicada (que usa los datos del visitante).
