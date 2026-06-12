@@ -10,6 +10,7 @@ Todo es HTML autocontenido: funciona **sin internet**, se abre con **doble clic*
 |---|---|---|
 | ⭐ **SHIP IT!** (QR / celular) | `demos/claude-quest/index.html` | Capa wow: arcade de 90 seg, un pulgar, donde los 5 módulos del stack son power-ups. Termina con el mapa mental. |
 | ⭐ **PEDILO BIEN** | `demos/pedilo-bien/index.html` | Capa utilidad: 4 preguntas y el visitante se lleva su pedido profesional para Claude (copiar / WhatsApp) + el stack recomendado con razones. Sirve en pantalla grande y en tablet. |
+| ⭐ **EL MAPA DE CLAUDE** | `demos/mapa-claude/index.html` | Capa conocimiento: mapa interactivo de las 15 herramientas (5 ramas: Conversá · Creá · Conectá · Construí · Aprende), cada una explicada para todas las edades con ejemplo real. Con progreso 15/15 que invita a completarlo. |
 | **Pantalla de espera** | `pantalla-principal/index.html` | Frase central + terminal que narra en loop el criterio de stack + lugar para pegar el QR impreso. |
 | **Cartel industrias** | `pantalla-principal/industrias.html` | Rotativo de casos por rubro (tablet secundaria). |
 | Mini-apps de negocio | `demos/negocio-en-vivo/*.html` | Apoyo de la capa comprensión: peluquería (prompt+Code), restaurante (entra MCP), kiosco. |
@@ -38,7 +39,8 @@ El juego es un único archivo, pero un QR necesita una **URL accesible desde el 
 - **Cualquiera con celular** → QR de SHIP IT! primero. Es la pieza que se llevan puesta.
 - **Chico / joven** → SHIP IT! de nuevo (van a querer superar el puntaje) y la pantalla grande con la terminal.
 - **Adulto con negocio** → su mini-app + la explicación de stack del guion ("para esto alcanza prompt+Code; para aquello entra MCP").
-- **Curioso general** → gastos del evento o SHIP IT! de nuevo (van a querer mejorar el puntaje).
+- **Curioso general / "¿y qué más hace?"** → EL MAPA DE CLAUDE en la tablet: que explore las 15 estaciones a su ritmo (el contador 15/15 hace que quieran completarlo).
+- **Relajado / esperando** → gastos del evento o SHIP IT! de nuevo (van a querer mejorar el puntaje).
 
 ## Checklist pre-evento
 

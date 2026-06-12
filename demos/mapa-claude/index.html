@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#04060c">
+<title>EL MAPA DE CLAUDE — todas sus herramientas, explicadas</title>
+<style>
+  *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+  :root{
+    --bg:#04060c; --panel:#0b1320; --line:#1c3049; --line2:#2b4869;
+    --text:#eaf4ff; --muted:#8aa3bd; --dim:#5b7693;
+    --cyan:#5fd9ff; --pink:#ff6ec1; --green:#6cf0a8; --violet:#9d82e8; --amber:#ffce5c;
+  }
+  html,body{min-height:100%;background:var(--bg);color:var(--text);
+    font-family:system-ui,-apple-system,sans-serif;overscroll-behavior:none}
+  body{background:
+    radial-gradient(900px 480px at 80% -10%, rgba(93,60,180,.20), transparent 60%),
+    radial-gradient(700px 420px at 0% 110%, rgba(20,120,160,.15), transparent 60%),
+    var(--bg);padding-bottom:30px}
+  body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:60;opacity:.45;
+    background:repeating-linear-gradient(0deg,rgba(255,255,255,.02) 0 1px,transparent 1px 3px)}
+  .app{max-width:760px;margin:0 auto;padding:24px 16px 0;display:flex;flex-direction:column;gap:14px}
+
+  header{display:flex;flex-direction:column;gap:6px}
+  .eyebrow{font-size:10.5px;letter-spacing:3px;text-transform:uppercase;color:var(--cyan);font-weight:800;display:flex;align-items:center;gap:9px}
+  .eyebrow::before{content:'';width:22px;height:2px;background:var(--cyan);box-shadow:0 0 8px var(--cyan)}
+  h1{font-size:clamp(30px,7vw,44px);font-weight:900;font-style:italic;letter-spacing:-.5px;line-height:1;
+    background:linear-gradient(95deg,#fff 0%,var(--cyan) 50%,var(--violet) 100%);
+    -webkit-background-clip:text;background-clip:text;color:transparent;
+    filter:drop-shadow(0 0 22px rgba(95,217,255,.25))}
+  .baja{font-size:13.5px;color:var(--muted);line-height:1.5;max-width:52ch}
+  .baja b{color:var(--green)}
+
+  /* contador de exploración */
+  .hud{display:flex;align-items:center;gap:12px;background:var(--panel);border:1px solid var(--line);
+    border-radius:14px;padding:10px 14px}
+  .hud .barra{flex:1;height:6px;border-radius:6px;background:#13243a;overflow:hidden}
+  .hud .barra i{display:block;height:100%;width:0;border-radius:6px;transition:width .4s;
+    background:linear-gradient(90deg,var(--cyan),var(--violet),var(--pink))}
+  .hud .n{font-size:12.5px;font-weight:800;color:var(--cyan);min-width:104px;text-align:right;letter-spacing:.5px}
+
+  /* mapa */
+  .mapaWrap{position:relative;border:1px solid var(--line2);border-radius:20px;overflow:hidden;
+    background:radial-gradient(closest-side at 50% 50%, rgba(20,40,70,.35), transparent 75%), #060b14;
+    box-shadow:0 18px 60px rgba(0,0,0,.5), inset 0 0 80px rgba(20,60,110,.12)}
+  .mapa{position:relative;width:100%;aspect-ratio:1/1.28}
+  @media (min-width:700px){.mapa{aspect-ratio:1/1.05}}
+  svg.lineas{position:absolute;inset:0;width:100%;height:100%}
+  .nodo{position:absolute;transform:translate(-50%,-50%);display:flex;flex-direction:column;align-items:center;gap:4px;
+    background:none;border:none;cursor:pointer;font:inherit;color:var(--text);z-index:3;
+    transition:transform .15s}
+  .nodo:active{transform:translate(-50%,-50%) scale(.92)}
+  .nodo .burb{width:clamp(38px,9.5vw,58px);height:clamp(38px,9.5vw,58px);border-radius:50%;
+    display:flex;align-items:center;justify-content:center;font-size:clamp(16px,4vw,24px);
+    background:#0a1424;border:2px solid var(--line2);transition:border-color .2s,box-shadow .2s;position:relative}
+  .nodo .et{font-size:clamp(9.5px,2.3vw,12px);font-weight:800;letter-spacing:.4px;color:var(--muted);
+    background:rgba(4,8,16,.8);padding:2px 8px;border-radius:999px;white-space:nowrap}
+  .nodo.visto .burb::after{content:'✓';position:absolute;top:-4px;right:-4px;width:18px;height:18px;border-radius:50%;
+    background:var(--green);color:#04240f;font-size:11px;font-weight:900;display:flex;align-items:center;justify-content:center}
+  .nodo.centro .burb{width:clamp(64px,16vw,92px);height:clamp(64px,16vw,92px);font-size:clamp(26px,7vw,40px);
+    border-color:var(--cyan);box-shadow:0 0 34px rgba(95,217,255,.35);background:radial-gradient(circle at 35% 30%,#15304e,#081424)}
+  .nodo.centro .et{color:var(--cyan);font-size:clamp(10px,2.6vw,13px)}
+
+  /* leyenda de ramas */
+  .ramas{display:flex;gap:7px;flex-wrap:wrap;justify-content:center}
+  .rama{font-size:11px;font-weight:800;letter-spacing:1px;text-transform:uppercase;padding:6px 12px;border-radius:999px;border:1px solid}
+
+  /* sheet */
+  .velo{position:fixed;inset:0;background:rgba(2,5,10,.7);backdrop-filter:blur(3px);z-index:90;opacity:0;pointer-events:none;transition:opacity .25s}
+  .velo.on{opacity:1;pointer-events:auto}
+  .sheet{position:fixed;left:0;right:0;bottom:0;z-index:95;max-width:600px;margin:0 auto;
+    background:linear-gradient(180deg,#111d30,#0a1322);border:1px solid var(--line2);border-bottom:none;
+    border-radius:22px 22px 0 0;padding:16px 18px max(18px,env(safe-area-inset-bottom));
+    transform:translateY(105%);transition:transform .3s cubic-bezier(.2,.9,.3,1);box-shadow:0 -20px 60px rgba(0,0,0,.6)}
+  .sheet.on{transform:translateY(0)}
+  .asa{width:44px;height:4px;border-radius:4px;background:#2a466a;margin:0 auto 12px}
+  .sCat{font-size:10px;font-weight:800;letter-spacing:2px;text-transform:uppercase}
+  .sTit{font-size:22px;font-weight:900;display:flex;align-items:center;gap:11px;margin-top:4px}
+  .sTit .ic{width:42px;height:42px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:21px;border:1.5px solid;flex:none}
+  .bloque{margin-top:11px;padding:11px 13px;border-radius:13px;font-size:13.5px;line-height:1.55}
+  .bSimple{background:rgba(95,217,255,.06);border:1px solid rgba(95,217,255,.3);color:#d7eefc}
+  .bSimple b{color:var(--cyan)}
+  .bReal{background:rgba(108,240,168,.06);border:1px solid rgba(108,240,168,.3);color:#d6f5e4}
+  .bReal b{color:var(--green)}
+  .bProba{margin-top:11px;font-size:12px;color:var(--dim);line-height:1.5;padding-left:10px;border-left:2px solid var(--line2)}
+  .bProba b{color:var(--amber)}
+  .sBtn{margin-top:14px;width:100%;padding:14px;border:none;border-radius:13px;font:inherit;font-weight:900;font-size:15px;cursor:pointer;
+    background:linear-gradient(135deg,var(--cyan),var(--violet));color:#04121c}
+  .sBtn:active{transform:scale(.97)}
+
+  /* final */
+  .final{display:none;background:linear-gradient(180deg,#13203a,#0a1322);border:1px solid #34508a;border-radius:18px;padding:18px;text-align:center}
+  .final.on{display:block;animation:pop .35s}
+  @keyframes pop{from{transform:scale(.94);opacity:0}}
+  .final h2{font-size:20px;font-weight:900}
+  .final h2 em{font-style:normal;color:var(--cyan)}
+  .final p{font-size:13px;color:#bcd2e6;line-height:1.55;margin-top:8px}
+  .final .cierre{margin-top:12px;font-size:14.5px;font-weight:800;color:#dcd2ff;background:rgba(157,130,232,.12);
+    border:1px solid rgba(157,130,232,.5);border-radius:13px;padding:12px}
+  footer{text-align:center;font-size:10px;color:#2c4763;letter-spacing:2px;text-transform:uppercase;padding:18px 0 0}
+</style>
+</head>
+<body>
+<div class="app">
+  <header>
+    <div class="eyebrow">3° Degustación Birria · guía interactiva</div>
+    <h1>EL MAPA DE CLAUDE</h1>
+    <div class="baja">Claude es mucho más que un chat. Tocá cada estación del mapa y descubrí <b>todas las herramientas</b> — explicadas para que las entienda cualquiera, con un ejemplo real para usar mañana.</div>
+  </header>
+
+  <div class="hud">
+    <div class="barra"><i id="prog"></i></div>
+    <div class="n" id="cuenta">0 / 15 exploradas</div>
+  </div>
+
+  <div class="mapaWrap">
+    <div class="mapa" id="mapa">
+      <svg class="lineas" id="lineas" viewBox="0 0 100 100" preserveAspectRatio="none"></svg>
+    </div>
+  </div>
+
+  <div class="ramas" id="ramas"></div>
+
+  <div class="final" id="final">
+    <h2>Exploraste el mapa completo. <em>Ahora sabés más que el 99%.</em></h2>
+    <p>La mayoría usa solo la primera estación: el chat. Vos ya conocés el ecosistema entero. El siguiente paso es elegir UNA herramienta y probarla esta semana con un problema tuyo de verdad.</p>
+    <div class="cierre">«Mientras el resto conversa, Claude construye.»</div>
+  </div>
+
+  <footer>generado con claude fable 5 · sin internet · un solo archivo</footer>
+</div>
+
+<div class="velo" id="velo"></div>
+<div class="sheet" id="sheet">
+  <div class="asa"></div>
+  <div class="sCat" id="sCat"></div>
+  <div class="sTit"><span class="ic" id="sIc"></span><span id="sTit"></span></div>
+  <div class="bloque bSimple" id="sSimple"></div>
+  <div class="bloque bReal" id="sReal"></div>
+  <div class="bProba" id="sProba"></div>
+  <button class="sBtn" id="sBtn">Siguiente estación →</button>
+</div>
+
+<script>
+"use strict";
+const $=id=>document.getElementById(id);
+
+/* ============ contenido: 5 ramas × 3 estaciones ============ */
+const RAMAS=[
+ {n:'CONVERSÁ',col:'#5fd9ff',ang:-90,nodos:[
+  {ic:'💬',n:'Chat',
+   s:'<b>Para cualquiera:</b> le escribís como a una persona y te entiende — con errores de tipeo, a medias, en tu idioma. Se acuerda de toda la conversación.',
+   r:'<b>Ejemplo real:</b> "explicame este contrato de alquiler cláusula por cláusula, como si tuviera 15 años, y marcame las que me convienen renegociar".',
+   p:'Gratis en claude.ai — es la puerta de entrada.'},
+  {ic:'👁️',n:'Visión',
+   s:'<b>Para cualquiera:</b> le mostrás una foto y la VE de verdad: lee carteles, entiende gráficos, reconoce qué hay en la imagen.',
+   r:'<b>Ejemplo real:</b> foto del pizarrón de la facultad → apuntes ordenados. Foto de la planta mustia → diagnóstico y cuidados. Foto de la factura → los datos cargados.',
+   p:'Arrastrá cualquier imagen al chat y preguntale algo.'},
+  {ic:'📄',n:'Archivos',
+   s:'<b>Para cualquiera:</b> le das un PDF de 200 páginas, una planilla o un contrato y lo lee TODO — después le preguntás lo que quieras sobre eso.',
+   r:'<b>Ejemplo real:</b> "acá están las ventas del año en Excel: ¿qué mes fue el peor y por qué puede haber sido?"',
+   p:'Soporta PDF, Word, Excel, imágenes, código y más.'},
+ ]},
+ {n:'CREÁ',col:'#ff6ec1',ang:-18,nodos:[
+  {ic:'⚡',n:'Artifacts',
+   s:'<b>Para cualquiera:</b> no solo te responde — te FABRICA cosas que ves al lado del chat: una app, un juego, una calculadora, funcionando al instante.',
+   r:'<b>Ejemplo real:</b> "armame una ruleta para sortear quién lava los platos" → 30 segundos después la estás girando. Los juegos de este stand nacieron así.',
+   p:'Pedile "armame una app que..." y mirá el panel derecho.'},
+  {ic:'📊',n:'Documentos',
+   s:'<b>Para cualquiera:</b> genera archivos de verdad: Word con formato, Excel con fórmulas, PowerPoint con diseño, PDF listos para imprimir.',
+   r:'<b>Ejemplo real:</b> "armame la presentación para el banco: 8 diapositivas, números de mi negocio, sobrio" → bajás el .pptx y lo abrís en tu compu.',
+   p:'Lo hace con "skills" de documentos que ya trae aprendidas.'},
+  {ic:'🎨',n:'Diagramas',
+   s:'<b>Para cualquiera:</b> convierte ideas enredadas en dibujos claros: mapas de procesos, organigramas, líneas de tiempo, mockups de pantallas.',
+   r:'<b>Ejemplo real:</b> "dibujá el recorrido de un pedido en mi rotisería, del WhatsApp a la entrega" → diagrama listo para colgar en la cocina.',
+   p:'Decile "mostrámelo en un diagrama" después de cualquier explicación.'},
+ ]},
+ {n:'CONECTÁ',col:'#6cf0a8',ang:54,nodos:[
+  {ic:'🔌',n:'MCP',
+   s:'<b>Para cualquiera:</b> es el ENCHUFE. Conecta a Claude con tus apps: Gmail, Drive, calendario, tu sistema de ventas. Deja de contarle las cosas: las ve solo.',
+   r:'<b>Ejemplo real:</b> "buscá en mis mails el presupuesto que me pasó el contador y armame el resumen de gastos en el calendario de pagos".',
+   p:'Se activa una vez por app, con tu permiso explícito. Vos decidís qué ve.'},
+  {ic:'🌐',n:'Búsqueda web',
+   s:'<b>Para cualquiera:</b> cuando hace falta info de HOY (precios, noticias, horarios), sale a internet, la busca y te la trae con las fuentes.',
+   r:'<b>Ejemplo real:</b> "¿a cuánto está el dólar y cuánto me conviene ajustar mis precios este mes?" — con datos del momento, no de hace un año.',
+   p:'La usa sola cuando detecta que tu pregunta necesita datos frescos.'},
+  {ic:'🖥️',n:'Usar la compu',
+   s:'<b>Para cualquiera:</b> Claude puede usar una computadora como vos: mueve el mouse, hace clic, escribe, navega. Vos mirás cómo trabaja.',
+   r:'<b>Ejemplo real:</b> "entrá al sistema de la obra social y bajame los comprobantes del mes" — los pasos aburridos los hace él, paso a paso y a la vista.',
+   p:'Siempre con tu permiso por aplicación, y podés frenarlo cuando quieras.'},
+ ]},
+ {n:'CONSTRUÍ',col:'#9d82e8',ang:126,nodos:[
+  {ic:'🛠️',n:'Claude Code',
+   s:'<b>Para cualquiera:</b> el taller. No te tira código suelto: crea el proyecto completo, lo EJECUTA, ve sus propios errores y los corrige hasta que funciona.',
+   r:'<b>Ejemplo real:</b> TODO este stand — juegos, apps, pantallas — lo construyó Claude Code en un día, probando cada pieza en el navegador antes de entregarla.',
+   p:'Es la herramienta de los que construyen en serio. Y se le habla en castellano.'},
+  {ic:'🤖',n:'Agentes',
+   s:'<b>Para cualquiera:</b> para trabajos grandes, Claude se divide en ayudantes: uno investiga, otro construye, otro revisa — todos a la vez.',
+   r:'<b>Ejemplo real:</b> "migrá las 200 fichas de clientes del papel al sistema" → varios agentes en paralelo, cada uno con su parte, en una fracción del tiempo.',
+   p:'Como una brigada de cocina: nadie hace el menú entero solo.'},
+  {ic:'🔁',n:'Tareas programadas',
+   s:'<b>Para cualquiera:</b> le dejás encargos que se repiten solos: cada mañana, cada lunes, cada vez que pase algo.',
+   r:'<b>Ejemplo real:</b> "todos los lunes a las 8 revisá los vencimientos de la semana y mandame el resumen" — y no se olvida nunca.',
+   p:'Se configura una vez, trabaja para siempre.'},
+ ]},
+ {n:'APRENDE',col:'#ffce5c',ang:198,nodos:[
+  {ic:'📐',n:'Skills',
+   s:'<b>Para cualquiera:</b> le enseñás TU forma de hacer las cosas UNA vez — cómo redactás, tu formato de presupuesto, tu estilo — y la aplica siempre.',
+   r:'<b>Ejemplo real:</b> "así escribo yo los presupuestos: este formato, este tono, estos datos" → cada presupuesto futuro sale con tu sello, sin repetirle nada.',
+   p:'Es la diferencia entre un ayudante nuevo cada día y uno que ya conoce la casa.'},
+  {ic:'🧠',n:'Memoria',
+   s:'<b>Para cualquiera:</b> se acuerda de vos entre conversaciones: tu nombre, tu negocio, tus preferencias, en qué quedaron la última vez.',
+   r:'<b>Ejemplo real:</b> volvés a la semana y le decís "seguimos con lo del local" — y sabe exactamente de qué hablás.',
+   p:'Vos controlás qué recuerda y podés borrarlo cuando quieras.'},
+  {ic:'📁',n:'Proyectos',
+   s:'<b>Para cualquiera:</b> carpetas de trabajo con todo el contexto adentro: los archivos, las instrucciones, las conversaciones del tema.',
+   r:'<b>Ejemplo real:</b> un proyecto "Mi kiosco" con tus listas de precios y proveedores → cada chat nuevo ahí adentro ya arranca sabiendo todo.',
+   p:'Uno por tema: el negocio, el estudio, la mudanza.'},
+ ]},
+];
+
+/* ============ layout radial (elíptico: x e y por separado) ============ */
+const CX=50,CY=51;
+const RX=[19,30.5,41.5], RY=[16,29,42];
+const visitados=new Set();
+const TOTAL=RAMAS.reduce((a,r)=>a+r.nodos.length,0);
+let actual=null; /* {rama,idx} */
+
+const mapa=$('mapa'),svg=$('lineas');
+function pos(ang,i){const a=ang*Math.PI/180;return {x:CX+Math.cos(a)*RX[i],y:CY+Math.sin(a)*RY[i]};}
+
+/* líneas */
+let svgHTML='';
+RAMAS.forEach(r=>{
+  const pts=[{x:CX,y:CY},...RX.map((_,i)=>pos(r.ang,i))];
+  const d='M '+pts.map(p=>p.x+' '+p.y).join(' L ');
+  svgHTML+='<path d="'+d+'" fill="none" stroke="'+r.col+'" stroke-width="0.7" stroke-linecap="round" opacity="0.5"/>';
+  svgHTML+='<path d="'+d+'" fill="none" stroke="'+r.col+'" stroke-width="0.25" stroke-linecap="round" opacity="0.9" stroke-dasharray="1.5 3"><animate attributeName="stroke-dashoffset" from="0" to="-9" dur="1.6s" repeatCount="indefinite"/></path>';
+});
+svg.innerHTML=svgHTML;
+
+/* nodos */
+RAMAS.forEach((r,ri)=>{
+  r.nodos.forEach((nd,ni)=>{
+    const p=pos(r.ang,ni);
+    const b=document.createElement('button');b.className='nodo';b.id='nd-'+ri+'-'+ni;
+    b.style.left=p.x+'%';b.style.top=p.y+'%';
+    b.innerHTML='<span class="burb" style="border-color:'+r.col+'55">'+nd.ic+'</span><span class="et">'+nd.n+'</span>';
+    b.onclick=()=>abrir(ri,ni);
+    mapa.appendChild(b);
+  });
+});
+/* centro */
+const c=document.createElement('button');c.className='nodo centro';
+c.style.left=CX+'%';c.style.top=CY+'%';
+c.innerHTML='<span class="burb">✳️</span><span class="et">CLAUDE</span>';
+c.onclick=()=>{ /* siguiente sin visitar */
+  for(let ri=0;ri<RAMAS.length;ri++)for(let ni=0;ni<RAMAS[ri].nodos.length;ni++)
+    if(!visitados.has(ri+'-'+ni)){abrir(ri,ni);return;}
+};
+mapa.appendChild(c);
+
+/* leyenda */
+$('ramas').innerHTML=RAMAS.map(r=>
+  '<span class="rama" style="color:'+r.col+';border-color:'+r.col+'55;background:'+r.col+'10">'+r.n+'</span>').join('');
+
+/* ============ sheet ============ */
+function abrir(ri,ni){
+  const r=RAMAS[ri],nd=r.nodos[ni];
+  actual={ri,ni};
+  $('sCat').textContent=r.n;$('sCat').style.color=r.col;
+  $('sIc').textContent=nd.ic;$('sIc').style.cssText='color:'+r.col+';border-color:'+r.col+'66;background:'+r.col+'14';
+  $('sTit').textContent=nd.n;
+  $('sSimple').innerHTML=nd.s;
+  $('sReal').innerHTML=nd.r;
+  $('sProba').innerHTML='<b>Dato:</b> '+nd.p;
+  $('velo').classList.add('on');$('sheet').classList.add('on');
+  if(!visitados.has(ri+'-'+ni)){
+    visitados.add(ri+'-'+ni);
+    $('nd-'+ri+'-'+ni).classList.add('visto');
+    actualizar();
+  }
+}
+function siguiente(){
+  /* próxima estación de la misma rama; si terminó, primera sin visitar */
+  if(actual){
+    const {ri,ni}=actual;
+    if(ni+1<RAMAS[ri].nodos.length){abrir(ri,ni+1);return;}
+  }
+  for(let ri=0;ri<RAMAS.length;ri++)for(let ni=0;ni<RAMAS[ri].nodos.length;ni++)
+    if(!visitados.has(ri+'-'+ni)){abrir(ri,ni);return;}
+  cerrar();
+}
+function cerrar(){$('velo').classList.remove('on');$('sheet').classList.remove('on');}
+$('sBtn').onclick=siguiente;
+$('velo').onclick=cerrar;
+
+function actualizar(){
+  $('prog').style.width=(visitados.size/TOTAL*100)+'%';
+  $('cuenta').textContent=visitados.size+' / '+TOTAL+' exploradas';
+  if(visitados.size===TOTAL){
+    $('final').classList.add('on');
+    $('sBtn').textContent='Cerrar el mapa ✓';
+    setTimeout(()=>$('final').scrollIntoView({behavior:'smooth',block:'center'}),400);
+  }
+}
+</script>
+</body>
+</html>

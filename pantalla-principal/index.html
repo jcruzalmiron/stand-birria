@@ -6,24 +6,32 @@
 <title>Mientras el resto conversa, Claude construye.</title>
 <style>
   *{margin:0;padding:0;box-sizing:border-box}
-  html,body{height:100%;background:#0A0A0A;color:#eee;font-family:system-ui,-apple-system,sans-serif;overflow:hidden}
-  body{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6vh;cursor:none}
-  .frase{font-size:clamp(34px,5.2vw,76px);font-weight:800;text-align:center;line-height:1.2;max-width:90vw;letter-spacing:-1px}
-  .frase em{font-style:normal;background:linear-gradient(90deg,#9d82e8,#e87c5c);-webkit-background-clip:text;background-clip:text;color:transparent}
-  .term{width:min(880px,90vw);height:34vh;background:#0d0d12;border:1px solid #222230;border-radius:14px;overflow:hidden;box-shadow:0 20px 60px rgba(0,0,0,.6)}
-  .tbar{height:34px;background:#16161e;display:flex;align-items:center;gap:7px;padding:0 14px}
+  html,body{height:100%;background:#04060c;color:#eaf4ff;font-family:system-ui,-apple-system,sans-serif;overflow:hidden}
+  body{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6vh;cursor:none;
+    background:
+      radial-gradient(1000px 520px at 82% -10%, rgba(93,60,180,.20), transparent 60%),
+      radial-gradient(800px 460px at 0% 112%, rgba(20,120,160,.14), transparent 60%),
+      #04060c}
+  body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:50;opacity:.4;
+    background:repeating-linear-gradient(0deg,rgba(255,255,255,.02) 0 1px,transparent 1px 3px)}
+  .frase{font-size:clamp(34px,5.2vw,76px);font-weight:900;text-align:center;line-height:1.2;max-width:90vw;letter-spacing:-1px}
+  .frase em{font-style:italic;background:linear-gradient(95deg,#5fd9ff,#9d82e8,#ff6ec1);-webkit-background-clip:text;background-clip:text;color:transparent;
+    filter:drop-shadow(0 0 26px rgba(124,92,204,.35))}
+  .term{width:min(880px,90vw);height:34vh;background:#070d18;border:1px solid #2b4869;border-radius:16px;overflow:hidden;
+    box-shadow:0 20px 70px rgba(0,0,0,.6), 0 0 50px rgba(95,217,255,.06)}
+  .tbar{height:34px;background:#0b1424;border-bottom:1px solid #1c3049;display:flex;align-items:center;gap:7px;padding:0 14px}
   .dot{width:11px;height:11px;border-radius:50%}
   .tbar span{margin-left:8px;font-size:12px;color:#666;font-family:ui-monospace,Consolas,monospace}
   .tbody{padding:14px 18px;height:calc(100% - 34px);overflow:hidden;font-family:ui-monospace,Consolas,monospace;font-size:clamp(13px,1.4vw,17px);line-height:1.7}
   .ln{white-space:pre-wrap;word-break:break-all}
-  .p{color:#7ee0a3}.cmd{color:#eee}.out{color:#777}.ok{color:#9d82e8}
-  .cursor{display:inline-block;width:9px;height:1.1em;background:#9d82e8;vertical-align:text-bottom;animation:bl 0.9s steps(1) infinite}
+  .p{color:#6cf0a8}.cmd{color:#eaf4ff}.out{color:#5b7693}.ok{color:#5fd9ff}
+  .cursor{display:inline-block;width:9px;height:1.1em;background:#5fd9ff;vertical-align:text-bottom;animation:bl 0.9s steps(1) infinite}
   @keyframes bl{50%{opacity:0}}
   .esquina{position:fixed;bottom:24px;right:30px;font-size:clamp(13px,1.3vw,17px);color:#555;letter-spacing:1px}
   .esquina b{color:#9d82e8}
-  .qr{position:fixed;bottom:24px;left:30px;display:flex;align-items:center;gap:14px}
-  .qr .marco{width:92px;height:92px;border:2px dashed #3a3a5a;border-radius:12px;display:flex;align-items:center;justify-content:center;color:#44446a;font-size:11px;text-align:center;line-height:1.3}
-  .qr .txt{font-size:clamp(13px,1.4vw,17px);color:#8a83b8;line-height:1.45}
+  .qr{position:fixed;bottom:24px;left:30px;display:flex;align-items:center;gap:14px;z-index:6}
+  .qr .marco{width:96px;height:96px;border:2px dashed #2b4869;border-radius:14px;display:flex;align-items:center;justify-content:center;color:#3d5a7a;font-size:11px;text-align:center;line-height:1.3;background:rgba(11,19,32,.6)}
+  .qr .txt{font-size:clamp(13px,1.4vw,17px);color:#8aa3bd;line-height:1.5}
   .qr .txt b{color:#5fd9ff}
 </style>
 </head>
@@ -49,6 +57,7 @@ const GUION=[
   ['$ claude "comandas de cocina con los pedidos de mi app de delivery"','Esto toca datos vivos → se suma MCP al stack','Conectando fuente de pedidos · tablero en tiempo real','✔ El prompt solo no alcanzaba: el stack sí'],
   ['$ claude "preparame TODO el stand para mañana"','Tarea multifrente → subagentes en paralelo','agente 1: juego · agente 2: apps · agente 3: guion y QA','✔ Entrega grande coordinada — así se armó esto'],
   ['$ claude "un arcade para que la gente juegue desde el QR"','Generando SHIP IT! · un pulgar · 90 segundos','Los 5 módulos del stack son power-ups jugables','✔ Escaneá el QR del stand y probalo en tu celu'],
+  ['$ claude "un mapa de TODAS tus herramientas, para todas las edades"','15 estaciones: chat, visión, artifacts, MCP, agentes...','EL MAPA DE CLAUDE · tocá cada estación y explorá','✔ La mayoría usa solo el chat — vos podés más'],
 ];
 const tb=document.getElementById('tb');
 let bloque=0;

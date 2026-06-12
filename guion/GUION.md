@@ -3,12 +3,13 @@
 > Frase central (siempre se cierra con esto):
 > **"Mientras el resto conversa, Claude construye."**
 
-La experiencia tiene **dos capas**, y el guion las recorre en orden:
+La experiencia tiene **tres capas**, y el guion las recorre en orden:
 
 1. **Capa wow** → algo que se siente imposible de tener "recién hecho": el arcade **SHIP IT!** en su celu (QR).
-2. **Capa comprensión** → el mensaje honesto: Claude no es magia ni solo chat; el valor está en armar el **stack** correcto (Prompt · Skill · MCP · Agents · Claude Code) según el problema.
+2. **Capa utilidad** → **PEDILO BIEN**: el visitante se lleva su pedido profesional armado, usable el lunes.
+3. **Capa conocimiento** → **EL MAPA DE CLAUDE**: las 15 herramientas del ecosistema explicadas para todas las edades. Es lo que convierte curiosidad en dominio.
 
-La gracia: la capa 2 ya viene contrabandeada dentro de la capa 1 — en SHIP IT! los módulos del stack son power-ups que cambian el juego, y el final muestra el mapa mental.
+La gracia: cada capa contrabandea la siguiente — en SHIP IT! los módulos del stack son power-ups; en PEDILO BIEN el stack se recomienda con razones; en EL MAPA se entiende el ecosistema entero.
 
 ---
 
@@ -49,7 +50,12 @@ La gracia: la capa 2 ya viene contrabandeada dentro de la capa 1 — en SHIP IT!
   - "¿Y todo este stand?" → *"tarea multifrente: subagentes en paralelo + una skill de calidad visual + Claude Code"*.
 - Señalá la terminal de la pantalla principal: está contando exactamente ese criterio en loop.
 
-**4. Preguntas + cierre (3 min)** — respuestas abajo. Cerrar siempre con la frase central.
+**4. EL MAPA DE CLAUDE (si hay interés genuino, 3 min)**
+- Pasale la tablet con el mapa: "esto es todo lo que la mayoría no sabe que existe. Explorá las que te llamen — cada una tiene un ejemplo para tu vida real."
+- El contador 15/15 trabaja solo: la gente quiere completarlo. Mientras exploran, contestás preguntas.
+- Remate pedagógico: "el 99% usa solo la primera estación, el chat. Con conocer dos o tres más ya estás adelante de casi todos."
+
+**5. Preguntas + cierre (3 min)** — respuestas abajo. Cerrar siempre con la frase central.
 
 ---
 
