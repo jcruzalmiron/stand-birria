@@ -3,222 +3,344 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Menú QR · Stand Birria</title>
+<title>Carta de Degustación · Stand Birria</title>
 <style>
   *{margin:0;padding:0;box-sizing:border-box;-webkit-print-color-adjust:exact;print-color-adjust:exact}
   :root{
-    --bg:#05070d; --panel:#0b1320; --line:#24415e; --line2:#2b4869;
-    --cyan:#5fd9ff; --violet:#9d82e8; --green:#6cf0a8; --amber:#ffce5c; --pink:#ff6ec1;
-    --text:#eaf4ff; --muted:#8aa3bd;
+    /* paleta papel crema, tinta cálida */
+    --papel:#f4ead7;
+    --papel2:#ede0c4;
+    --tinta:#231b14;
+    --tinta2:#4a3a28;
+    --tinta3:#7a6a52;
+    --filete:#2a1f12;
+    --acento:#a52a2a;     /* rojo birria */
+    --oro:#a67c30;        /* dorado tostado */
+    --verde:#3b6b3a;
+    --azul:#1f3d5e;
   }
-  html,body{background:var(--bg);color:var(--text);font-family:system-ui,-apple-system,sans-serif}
-  body{min-height:100vh;padding:28px;
-    background:
-      radial-gradient(900px 420px at 90% -10%, rgba(157,130,232,.18), transparent 60%),
-      radial-gradient(700px 360px at 0% 110%, rgba(95,217,255,.14), transparent 60%),
-      var(--bg)}
+  html,body{background:#1a130c;color:var(--tinta);font-family:Georgia,'Times New Roman',serif;font-feature-settings:"liga","onum"}
+  body{min-height:100vh;padding:24px 14px}
+  body::before{content:'';position:fixed;inset:0;pointer-events:none;background:
+    radial-gradient(900px 420px at 80% -10%, rgba(255,200,120,.12), transparent 60%);z-index:0}
 
   /* ---------- panel de configuración (no se imprime) ---------- */
-  .cfg{max-width:980px;margin:0 auto 22px;background:var(--panel);border:1px solid var(--line);border-radius:18px;padding:18px 22px}
-  .cfg h2{font-size:14px;letter-spacing:2px;text-transform:uppercase;color:var(--amber);font-weight:800;margin-bottom:14px;display:flex;justify-content:space-between;align-items:center}
-  .cfg h2 .ay{font-size:11px;color:var(--muted);letter-spacing:1px;font-weight:600;text-transform:none}
-  .cfg .filas{display:flex;flex-direction:column;gap:10px}
-  .cfg .f{display:grid;grid-template-columns:130px 1fr;gap:12px;align-items:center}
-  .cfg .f label{font-size:13px;font-weight:800;color:var(--text)}
-  .cfg .f input{font:inherit;font-size:13.5px;background:#06101a;border:1px solid var(--line);color:var(--text);border-radius:9px;padding:10px 12px;width:100%}
-  .cfg .f input:focus{outline:2px solid var(--cyan);outline-offset:1px}
-  .cfg .acc{display:flex;gap:10px;margin-top:14px;flex-wrap:wrap}
-  .cfg button{font:inherit;font-weight:800;font-size:13px;letter-spacing:.5px;border:none;cursor:pointer;border-radius:10px;padding:11px 18px;color:#04121c;background:linear-gradient(135deg,var(--cyan),var(--violet))}
-  .cfg button.alt{background:#0f1d2c;color:var(--text);border:1px solid var(--line)}
-  .cfg .tip{margin-top:10px;font-size:12px;color:var(--muted);line-height:1.5;padding:10px 12px;border-left:2px solid var(--line2);background:rgba(255,255,255,.015);border-radius:0 8px 8px 0}
-  .cfg .tip b{color:var(--amber)}
+  .cfg{max-width:980px;margin:0 auto 22px;background:#0d1320;border:1px solid #24415e;border-radius:18px;padding:18px 22px;color:#eaf4ff;font-family:system-ui,-apple-system,sans-serif;position:relative;z-index:5}
+  .cfg h2{font-size:13px;letter-spacing:2.5px;text-transform:uppercase;color:#ffce5c;font-weight:800;margin-bottom:14px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px}
+  .cfg h2 .ay{font-size:11px;color:#8aa3bd;letter-spacing:1px;font-weight:600;text-transform:none}
+  .cfg .f{display:grid;grid-template-columns:160px 1fr;gap:12px;align-items:center;margin-bottom:9px}
+  .cfg .f label{font-size:12.5px;font-weight:800}
+  .cfg .f input{font:inherit;font-size:13px;background:#06101a;border:1px solid #24415e;color:#eaf4ff;border-radius:9px;padding:10px 12px;width:100%}
+  .cfg .f input:focus{outline:2px solid #5fd9ff;outline-offset:1px}
+  .cfg .acc{display:flex;gap:10px;margin-top:12px;flex-wrap:wrap}
+  .cfg button{font:inherit;font-weight:800;font-size:12.5px;letter-spacing:.5px;border:none;cursor:pointer;border-radius:10px;padding:11px 18px;color:#04121c;background:linear-gradient(135deg,#5fd9ff,#9d82e8)}
+  .cfg button.alt{background:#0f1d2c;color:#eaf4ff;border:1px solid #24415e}
+  .cfg .tip{margin-top:10px;font-size:11.5px;color:#8aa3bd;line-height:1.55;padding:9px 12px;border-left:2px solid #2b4869;background:rgba(255,255,255,.015);border-radius:0 8px 8px 0}
 
-  /* ---------- HOJA 1: menú trifold A4 horizontal ---------- */
-  .hoja{max-width:1100px;margin:0 auto 22px;border:1px solid var(--line);border-radius:24px;padding:30px;background:rgba(11,19,32,.95);page-break-after:always;break-after:page}
-  .top{display:flex;justify-content:space-between;gap:22px;align-items:flex-start;margin-bottom:22px}
-  .eyebrow{font-size:11px;letter-spacing:3px;text-transform:uppercase;color:var(--cyan);font-weight:800;display:flex;align-items:center;gap:9px}
-  .eyebrow::before{content:'';width:22px;height:2px;background:var(--cyan)}
-  h1{font-size:46px;line-height:1;font-weight:900;font-style:italic;margin-top:8px;letter-spacing:-.5px;
-    background:linear-gradient(95deg,#fff,var(--cyan),var(--violet));-webkit-background-clip:text;background-clip:text;color:transparent}
-  .sub{margin-top:12px;color:var(--muted);font-size:15px;line-height:1.55;max-width:54ch}
-  .sub b{color:var(--green)}
-  .claim{font-size:16px;font-weight:800;color:var(--green);text-align:right;max-width:18ch;line-height:1.3;align-self:flex-end}
+  /* ============================================================
+     CARTA — hoja A4 vertical impecable
+     ============================================================ */
+  .carta{max-width:760px;margin:0 auto 22px;background:var(--papel);color:var(--tinta);
+    border-radius:6px;padding:48px 56px 42px;position:relative;
+    box-shadow:0 28px 70px rgba(0,0,0,.6), inset 0 0 0 1px #d8c9a8;
+    page-break-after:always;break-after:page;z-index:2}
+  /* textura de papel */
+  .carta::before{content:'';position:absolute;inset:0;border-radius:6px;pointer-events:none;
+    background:
+      radial-gradient(ellipse at 10% 0%, rgba(120,80,30,.08), transparent 40%),
+      radial-gradient(ellipse at 90% 100%, rgba(120,80,30,.07), transparent 45%),
+      repeating-linear-gradient(45deg,rgba(120,80,30,.012) 0 1px,transparent 1px 4px),
+      repeating-linear-gradient(-45deg,rgba(120,80,30,.010) 0 1px,transparent 1px 5px)}
+  /* marco filete */
+  .carta::after{content:'';position:absolute;inset:18px;border:1px solid var(--filete);border-radius:3px;pointer-events:none;opacity:.55}
+  .carta>*{position:relative;z-index:1}
 
-  .grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
-  .card{border:1px solid var(--line);border-radius:20px;padding:18px;background:linear-gradient(180deg,#0d1828,#09111d);display:flex;flex-direction:column;gap:10px}
-  .card .num{font-size:11px;letter-spacing:2px;font-weight:800;color:var(--muted)}
-  .card h2{font-size:24px;line-height:1.05;font-weight:900}
-  .tag{align-self:flex-start;font-size:10.5px;text-transform:uppercase;letter-spacing:1.5px;padding:5px 11px;border-radius:999px;border:1px solid;font-weight:800}
-  .desc{color:#c9dced;font-size:13.5px;line-height:1.5;min-height:64px}
-  .qrbox{margin-top:auto;aspect-ratio:1;border-radius:14px;display:flex;align-items:center;justify-content:center;padding:8px;background:#fff}
-  .qrbox img{width:100%;height:100%;display:block;image-rendering:pixelated}
-  .qrbox.vacia{background:#08111d;border:2px dashed #355a7a;color:#6888a7;font-weight:700;font-size:12px;text-align:center;padding:14px;line-height:1.4}
-  .use{font-size:12px;color:var(--muted);line-height:1.45;text-align:center}
-  .use b{color:var(--text)}
+  /* ---- encabezado ---- */
+  .header{text-align:center;padding-bottom:20px;border-bottom:1px solid rgba(42,31,18,.4)}
+  .casa{font-size:10.5px;letter-spacing:5px;text-transform:uppercase;color:var(--tinta3);font-weight:700;font-family:'Helvetica Neue',Arial,sans-serif}
+  .casa::before,.casa::after{content:' ✦ ';color:var(--oro)}
+  .titulo{font-size:42px;font-weight:400;letter-spacing:1px;margin-top:14px;line-height:1;font-style:italic;color:var(--tinta)}
+  .titulo b{font-style:normal;font-weight:800;color:var(--acento);font-variant:small-caps;letter-spacing:3px}
+  .lema{margin-top:14px;font-size:13.5px;color:var(--tinta2);font-style:italic;letter-spacing:.3px;line-height:1.5;max-width:50ch;margin-left:auto;margin-right:auto}
+  .lema em{color:var(--acento);font-style:normal;font-weight:700}
 
-  .tips{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:20px}
-  .tip{border:1px solid var(--line);border-radius:16px;padding:14px 16px;background:#09111d}
-  .tip h3{font-size:12px;letter-spacing:1.8px;text-transform:uppercase;color:var(--amber);font-weight:800}
-  .tip p{margin-top:6px;color:#c6dbee;line-height:1.55;font-size:13px}
-  .pie{margin-top:18px;padding-top:14px;border-top:1px solid #18304a;display:flex;justify-content:space-between;gap:14px;color:#6d87a1;font-size:11.5px;line-height:1.5;flex-wrap:wrap}
-  .pie b{color:#d8e8f8}
+  /* ---- secciones ---- */
+  .seccion{margin-top:26px}
+  .seccion-cab{display:flex;align-items:center;gap:14px;margin-bottom:10px}
+  .seccion-cab .barra{flex:1;height:1px;background:var(--tinta);opacity:.4}
+  .seccion-cab h2{font-size:13px;letter-spacing:4px;text-transform:uppercase;font-weight:700;color:var(--tinta);
+    font-family:'Helvetica Neue',Arial,sans-serif;white-space:nowrap}
+  .seccion-cab .pasaje{font-size:10.5px;color:var(--tinta3);font-style:italic;font-family:Georgia,serif;letter-spacing:.5px}
 
-  /* ---------- HOJA 2-4: carteles individuales A5 ---------- */
-  .cartel{max-width:740px;margin:0 auto 22px;border:2px solid var(--line);border-radius:28px;padding:42px 38px;background:radial-gradient(circle at 50% -20%, rgba(95,217,255,.10), transparent 60%), #0a121f;page-break-after:always;break-after:page;text-align:center;display:flex;flex-direction:column;gap:18px;align-items:center}
-  .cartel .num{font-size:12px;letter-spacing:3px;font-weight:800;color:var(--muted)}
-  .cartel h2{font-size:54px;line-height:1;font-weight:900;font-style:italic;letter-spacing:-1px}
-  .cartel .tag{font-size:11px;padding:6px 14px}
-  .cartel .desc{font-size:16px;color:#cfe2f3;line-height:1.55;max-width:34ch;min-height:auto}
-  .cartel .qrbox{width:300px;height:300px;aspect-ratio:auto;border-radius:18px}
-  .cartel .use{font-size:13.5px;color:#a3bbd1;max-width:30ch}
-  .cartel .ev{font-size:11px;letter-spacing:2.5px;color:#3f5a7a;text-transform:uppercase;margin-top:6px}
-  .cartel .ev b{color:var(--cyan)}
+  /* ---- plato individual ---- */
+  .plato{display:grid;grid-template-columns:1fr auto;gap:14px;padding:11px 0;border-bottom:1px dashed rgba(42,31,18,.18);align-items:start}
+  .plato:last-child{border-bottom:none}
+  .plato-nombre{font-size:17px;font-weight:700;letter-spacing:.3px;line-height:1.15;color:var(--tinta)}
+  .plato-nombre .tag{display:inline-block;margin-left:8px;font-size:9.5px;letter-spacing:1.5px;text-transform:uppercase;padding:2px 8px;border:1px solid;border-radius:999px;font-family:'Helvetica Neue',Arial,sans-serif;font-weight:700;vertical-align:middle;position:relative;top:-2px}
+  .plato-desc{margin-top:4px;font-size:13px;line-height:1.5;color:var(--tinta2);font-style:italic;max-width:54ch}
+  .plato-desc b{font-style:normal;color:var(--tinta);font-weight:700}
+  .plato-precio{font-size:14px;font-weight:700;color:var(--tinta);font-family:Georgia,serif;text-align:right;white-space:nowrap;letter-spacing:.5px;padding-top:2px}
+  .plato-precio small{display:block;font-size:9.5px;font-weight:600;color:var(--tinta3);letter-spacing:1.5px;text-transform:uppercase;margin-top:2px;font-family:'Helvetica Neue',Arial,sans-serif}
+
+  /* ---- platos destacados (con QR) ---- */
+  .destacado{background:rgba(165,42,42,.04);border:1px solid rgba(165,42,42,.22);border-radius:8px;padding:14px 16px;margin:14px 0;display:grid;grid-template-columns:1fr 84px;gap:14px;align-items:center}
+  .destacado .plato-nombre::before{content:'✦ ';color:var(--acento)}
+  .destacado .qrmini{width:84px;height:84px;background:#fff;border:1px solid var(--tinta);border-radius:4px;padding:5px;display:flex;align-items:center;justify-content:center}
+  .destacado .qrmini img{width:100%;height:100%;image-rendering:pixelated}
+  .destacado .qrmini.vacio{color:var(--tinta3);font-size:9.5px;text-align:center;line-height:1.3;font-style:italic;font-family:Georgia,serif;padding:6px}
+  .destacado .escanear{font-size:10px;letter-spacing:1.5px;text-transform:uppercase;font-weight:700;color:var(--acento);font-family:'Helvetica Neue',Arial,sans-serif;margin-bottom:4px;display:inline-block}
+
+  /* ---- pie de carta ---- */
+  .pie{margin-top:28px;padding-top:18px;border-top:1px solid rgba(42,31,18,.4);text-align:center}
+  .pie .firma{font-style:italic;color:var(--tinta2);font-size:13.5px;line-height:1.55;max-width:48ch;margin:0 auto}
+  .pie .firma em{color:var(--acento);font-style:normal;font-weight:700}
+  .pie .casa-pie{margin-top:14px;font-size:10px;letter-spacing:4px;text-transform:uppercase;color:var(--tinta3);font-weight:700;font-family:'Helvetica Neue',Arial,sans-serif}
+
+  /* ============================================================
+     CARTELES GRANDES — 3 hojas A4 (una por experiencia QR principal)
+     ============================================================ */
+  .cartel{max-width:760px;margin:0 auto 22px;background:var(--papel);color:var(--tinta);
+    border-radius:6px;padding:60px 56px;position:relative;
+    box-shadow:0 28px 70px rgba(0,0,0,.6), inset 0 0 0 1px #d8c9a8;
+    page-break-after:always;break-after:page;text-align:center;min-height:980px;z-index:2;
+    display:flex;flex-direction:column;align-items:center;gap:22px}
+  .cartel::before{content:'';position:absolute;inset:0;border-radius:6px;pointer-events:none;
+    background:
+      radial-gradient(ellipse at 50% -10%, rgba(165,42,42,.10), transparent 50%),
+      repeating-linear-gradient(45deg,rgba(120,80,30,.012) 0 1px,transparent 1px 4px)}
+  .cartel::after{content:'';position:absolute;inset:18px;border:1px solid var(--filete);border-radius:3px;pointer-events:none;opacity:.55}
+  .cartel>*{position:relative;z-index:1}
+
+  .cartel .casa{margin-bottom:4px}
+  .cartel .plato-num{font-size:13px;letter-spacing:6px;color:var(--tinta3);font-weight:700;font-family:'Helvetica Neue',Arial,sans-serif;text-transform:uppercase}
+  .cartel h2{font-size:62px;font-weight:400;font-style:italic;letter-spacing:.5px;line-height:1;color:var(--tinta);max-width:14ch}
+  .cartel h2 b{font-style:normal;font-weight:800;font-variant:small-caps;letter-spacing:4px;color:var(--acento);display:block;margin-top:4px;font-size:.7em}
+  .cartel .tag-grande{font-size:11px;letter-spacing:3px;text-transform:uppercase;padding:7px 18px;border:1px solid var(--tinta);border-radius:999px;font-family:'Helvetica Neue',Arial,sans-serif;font-weight:700;color:var(--tinta)}
+  .cartel .desc-grande{font-size:17px;line-height:1.6;color:var(--tinta2);font-style:italic;max-width:38ch;margin:0 auto}
+  .cartel .desc-grande b{font-style:normal;color:var(--tinta);font-weight:700}
+  .cartel .qrbox-grande{width:300px;height:300px;background:#fff;padding:12px;border:2px solid var(--tinta);border-radius:6px;display:flex;align-items:center;justify-content:center;margin-top:6px}
+  .cartel .qrbox-grande img{width:100%;height:100%;image-rendering:pixelated}
+  .cartel .qrbox-grande.vacio{color:var(--tinta3);font-style:italic;font-size:13px;text-align:center;padding:20px;line-height:1.4}
+  .cartel .indic{font-size:11.5px;color:var(--tinta3);text-transform:uppercase;letter-spacing:3px;font-weight:700;font-family:'Helvetica Neue',Arial,sans-serif}
+  .cartel .indic::before{content:'↑ ';color:var(--acento)}
+  .cartel .indic::after{content:' ↑';color:var(--acento)}
+  .cartel .uso{font-size:14px;font-style:italic;color:var(--tinta2);max-width:32ch;line-height:1.55}
+  .cartel .firma-cartel{margin-top:auto;font-size:9.5px;letter-spacing:4px;color:var(--tinta3);font-family:'Helvetica Neue',Arial,sans-serif;font-weight:700;text-transform:uppercase}
 
   /* ---------- print ---------- */
   @media print{
-    @page{size:A4;margin:10mm}
-    body{padding:0;background:#fff;color:#000}
+    @page{size:A4;margin:8mm}
+    body{padding:0;background:#fff}
+    body::before{display:none}
     .cfg{display:none}
-    .hoja,.cartel{margin:0;border:none;background:#fff;color:#000;border-radius:0;max-width:none;box-shadow:none;page-break-after:always}
-    .hoja{padding:0}
-    .cartel{padding:24px;min-height:97vh}
-    .card,.tip{background:#fff;border-color:#000}
-    .card .desc,.tip p,.sub,.use,.pie{color:#000}
-    .pie{border-color:#000}
-    h1,.cartel h2{color:#000;-webkit-text-fill-color:#000;background:none}
-    .eyebrow{color:#000}
-    .eyebrow::before{background:#000}
-    .claim{color:#000}
-    .qrbox{background:#fff;border:1px solid #000}
-    .tag{border-color:#000 !important;color:#000 !important;background:#fff !important}
+    .carta,.cartel{margin:0;border-radius:0;box-shadow:none;max-width:none;page-break-after:always}
+    .carta{padding:32px 38px}
+    .cartel{padding:38px;min-height:97vh}
   }
 </style>
 </head>
 <body>
 
-<!-- panel de configuración (no se imprime) -->
+<!-- ============================================================
+     PANEL DE CONFIGURACIÓN (no se imprime)
+     ============================================================ -->
 <div class="cfg">
-  <h2><span>⚙️ Configurar URLs</span><span class="ay">Se generan los QR al instante. Después: Ctrl+P para imprimir.</span></h2>
-  <div class="filas">
-    <div class="f"><label>🎮 SHIP IT!</label><input id="u-ship" placeholder="https://tu-dominio.com/claude-quest/"></div>
-    <div class="f"><label>✍️ PEDILO BIEN</label><input id="u-pedi" placeholder="https://tu-dominio.com/pedilo-bien/"></div>
-    <div class="f"><label>🗺️ MAPA DE CLAUDE</label><input id="u-mapa" placeholder="https://tu-dominio.com/mapa-claude/"></div>
-  </div>
+  <h2><span>⚙️ Configurar URLs de los platos digitales</span><span class="ay">Los QR se generan al instante · Ctrl+P para imprimir 4 hojas A4</span></h2>
+  <div class="f"><label>🎮 Jugar (SHIP IT!)</label><input id="u-ship" placeholder="https://tu-dominio.com/claude-quest/"></div>
+  <div class="f"><label>✍️ Pedir bien (PEDILO BIEN)</label><input id="u-pedi" placeholder="https://tu-dominio.com/pedilo-bien/"></div>
+  <div class="f"><label>🗺️ El mapa (MAPA DE CLAUDE)</label><input id="u-mapa" placeholder="https://tu-dominio.com/mapa-claude/"></div>
   <div class="acc">
-    <button id="b-imp">🖨 Imprimir menú + 3 carteles</button>
+    <button id="b-imp">🖨 Imprimir carta + 3 carteles</button>
     <button class="alt" id="b-guardar">💾 Guardar URLs en este navegador</button>
     <button class="alt" id="b-limpiar">↺ Limpiar</button>
   </div>
-  <div class="tip"><b>Tip:</b> al imprimir salen 4 hojas — el menú trifold (1 hoja) y un cartel grande por experiencia (3 hojas A4) para colgar en distintos puntos del stand. Los QR se generan con la API pública de qrserver.com: necesitás internet al momento de generar/imprimir, después el papel no necesita más nada.</div>
+  <div class="tip"><b>Tip:</b> el archivo imprime 4 hojas A4 — la <b>carta</b> de degustación completa (1 hoja, para el mostrador) + un <b>cartel grande</b> por cada experiencia QR (3 hojas, para colgar en distintos puntos del stand). Los QR se generan vía API pública de qrserver.com: necesitás internet al momento de imprimir, después el papel no necesita más nada.</div>
 </div>
 
-<!-- ============ HOJA 1: MENÚ ============ -->
-<section class="hoja">
-  <div class="top">
-    <div>
-      <div class="eyebrow">3° Degustación Birria · menú interactivo</div>
-      <h1>ESCANEÁ LO QUE QUIERAS PROBAR</h1>
-      <div class="sub">No hace falta entender todo de entrada. Elegí una experiencia según lo que te interese: <b>jugar</b>, <b>pedirle mejor a Claude</b> o <b>entender todas sus herramientas</b>.</div>
+<!-- ============================================================
+     HOJA 1 — LA CARTA
+     ============================================================ -->
+<article class="carta">
+  <header class="header">
+    <div class="casa">3ª Degustación Birria · Claude Fable 5</div>
+    <h1 class="titulo">Carta de <b>Degustación</b></h1>
+    <p class="lema">No es un menú para devorar de una. Es para ir <em>probando de a poco</em>, en el orden que prefieras, hasta entender qué sabe hacer esta IA cuando deja de ser solo un chat.</p>
+  </header>
+
+  <!-- ENTRADAS -->
+  <section class="seccion">
+    <div class="seccion-cab"><div class="barra"></div><h2>Entradas</h2><span class="pasaje">para abrir el paladar · 1 min</span><div class="barra"></div></div>
+
+    <div class="destacado">
+      <div>
+        <span class="escanear">★ recomendada de la casa</span>
+        <div class="plato-nombre">Ship It! <span class="tag" style="color:var(--acento);border-color:var(--acento)">Arcade</span></div>
+        <div class="plato-desc">Arcade vertical para el celular: atrapás pedidos y construís la ciudad. Los <b>power-ups son piezas reales</b> del ecosistema de Claude — al final, una receta a tu medida.</div>
+      </div>
+      <div class="qrmini vacio" id="qr-ship-min">QR<br>SHIP IT!</div>
     </div>
-    <div class="claim">Mientras el resto conversa, Claude construye.</div>
-  </div>
 
-  <div class="grid">
-    <article class="card">
-      <div class="num">01 — WOW</div>
-      <h2>Jugá</h2>
-      <span class="tag" style="color:var(--pink);border-color:rgba(255,110,193,.5)">SHIP IT! · 90 seg</span>
-      <div class="desc">Arcade de un pulgar: atrapás pedidos y construís la ciudad. Los power-ups son piezas reales del stack de Claude.</div>
-      <div class="qrbox vacia" id="qr-ship">Pegá la URL de SHIP IT! arriba ↑</div>
-      <div class="use"><b>Cuándo:</b> para arrancar por algo rápido y visual.</div>
-    </article>
-
-    <article class="card">
-      <div class="num">02 — UTILIDAD</div>
-      <h2>Pedí bien</h2>
-      <span class="tag" style="color:var(--cyan);border-color:rgba(95,217,255,.5)">PEDILO BIEN · 60 seg</span>
-      <div class="desc">4 preguntas y te llevás un pedido profesional para Claude — el de TU caso — para usar el lunes.</div>
-      <div class="qrbox vacia" id="qr-pedi">Pegá la URL de PEDILO BIEN arriba ↑</div>
-      <div class="use"><b>Cuándo:</b> si tenés un negocio o un problema concreto.</div>
-    </article>
-
-    <article class="card">
-      <div class="num">03 — CONOCIMIENTO</div>
-      <h2>Conocé el mapa</h2>
-      <span class="tag" style="color:var(--green);border-color:rgba(108,240,168,.5)">EL MAPA · 5 min</span>
-      <div class="desc">15 herramientas del ecosistema (chat, visión, skills, MCP, agentes, Claude Code…) explicadas para cualquier edad.</div>
-      <div class="qrbox vacia" id="qr-mapa">Pegá la URL del MAPA arriba ↑</div>
-      <div class="use"><b>Cuándo:</b> para entender qué más hay además del chat.</div>
-    </article>
-  </div>
-
-  <div class="tips">
-    <div class="tip">
-      <h3>🪄 Querés ver algo en vivo</h3>
-      <p>En la notebook del stand mostramos lo que te interese: artifacts (apps en segundos), skills (presentaciones reales), subagentes en paralelo, MCP con tus datos o Claude usando Chrome.</p>
+    <div class="plato">
+      <div>
+        <div class="plato-nombre">Visión sobre cualquier cosa <span class="tag" style="color:var(--azul);border-color:var(--azul)">Foto</span></div>
+        <div class="plato-desc">Una toma de tu cámara, salteada con interpretación: lectura de tickets, planos, pizarrones o etiquetas. Servido <b>al instante</b>, con guarnición de explicación clara.</div>
+      </div>
+      <div class="plato-precio">30 seg<small>en notebook</small></div>
     </div>
-    <div class="tip">
-      <h3>💼 Tenés un caso propio</h3>
-      <p>Contanos qué te gustaría resolver y te mostramos el camino: qué prompt usar, qué piezas del ecosistema combinar y por dónde empezar mañana.</p>
-    </div>
-  </div>
 
-  <div class="pie">
-    <div><b>Tip:</b> escaneá ahora lo que te llame y seguilo en tu casa con calma.</div>
-    <div><b>Ecosistema:</b> Chat · Visión · Artifacts · Documentos · MCP · Web · Computer use · Code · Agents · Skills · Memoria · Proyectos · Tareas</div>
-  </div>
+    <div class="plato">
+      <div>
+        <div class="plato-nombre">Artifacts <span class="tag" style="color:var(--oro);border-color:var(--oro)">App en vivo</span></div>
+        <div class="plato-desc">Pedís y aparece: una calculadora, una ruleta para sortear, un juego para tu hijo. No te lo describe — <b>te lo entrega funcionando</b> al costado del chat.</div>
+      </div>
+      <div class="plato-precio">1 min<small>en notebook</small></div>
+    </div>
+  </section>
+
+  <!-- PRINCIPALES -->
+  <section class="seccion">
+    <div class="seccion-cab"><div class="barra"></div><h2>Principales</h2><span class="pasaje">para llevarte algo útil · 3 min</span><div class="barra"></div></div>
+
+    <div class="destacado">
+      <div>
+        <span class="escanear">★ recomendada para tu caso</span>
+        <div class="plato-nombre">Pedilo Bien <span class="tag" style="color:var(--acento);border-color:var(--acento)">Hecho a tu medida</span></div>
+        <div class="plato-desc">Cuatro preguntas con guarnición de criterio. Salís con <b>tu pedido profesional</b> redactado, listo para copiar o mandarte por WhatsApp y usar el lunes.</div>
+      </div>
+      <div class="qrmini vacio" id="qr-pedi-min">QR<br>PEDILO BIEN</div>
+    </div>
+
+    <div class="plato">
+      <div>
+        <div class="plato-nombre">Skills · documentos profesionales <span class="tag" style="color:var(--verde);border-color:var(--verde)">PowerPoint · Excel</span></div>
+        <div class="plato-desc">Le pedís una presentación, un informe, una planilla — y los entrega como <b>archivo real</b> (.pptx, .xlsx) listo para abrir en tu compu. Con tu estilo cuando se lo enseñás una vez.</div>
+      </div>
+      <div class="plato-precio">2 min<small>en notebook</small></div>
+    </div>
+
+    <div class="plato">
+      <div>
+        <div class="plato-nombre">MCP · conectado a tus datos <span class="tag" style="color:var(--azul);border-color:var(--azul)">Gmail · Drive</span></div>
+        <div class="plato-desc">El enchufe entre Claude y tus aplicaciones. Deja de ser un chat ciego: <b>lee tus mails, tu calendario, tu Drive</b> con tu permiso y a la vista. Servido bajo demanda.</div>
+      </div>
+      <div class="plato-precio">2 min<small>en notebook</small></div>
+    </div>
+  </section>
+
+  <!-- ESPECIAL DE LA CASA -->
+  <section class="seccion">
+    <div class="seccion-cab"><div class="barra"></div><h2>Especial de la Casa</h2><span class="pasaje">para los curiosos · 3 min</span><div class="barra"></div></div>
+
+    <div class="plato">
+      <div>
+        <div class="plato-nombre">Subagentes en paralelo <span class="tag" style="color:var(--oro);border-color:var(--oro)">Brigada de cocina</span></div>
+        <div class="plato-desc">Para trabajos grandes, Claude se divide en ayudantes que trabajan a la vez: uno investiga, otro construye, otro revisa. <b>Así se preparó este stand entero</b>, en un día.</div>
+      </div>
+      <div class="plato-precio">3 min<small>en notebook</small></div>
+    </div>
+
+    <div class="plato">
+      <div>
+        <div class="plato-nombre">Claude Code <span class="tag" style="color:var(--acento);border-color:var(--acento)">El taller</span></div>
+        <div class="plato-desc">El plato del chef. No te tira código suelto: <b>crea el proyecto, lo ejecuta, ve sus errores y los corrige</b> hasta que funciona. Todo lo que probás hoy salió de acá.</div>
+      </div>
+      <div class="plato-precio">5 min<small>en notebook</small></div>
+    </div>
+
+    <div class="plato">
+      <div>
+        <div class="plato-nombre">Claude usando tu Chrome <span class="tag" style="color:var(--azul);border-color:var(--azul)">Computer use</span></div>
+        <div class="plato-desc">Le mostrás un navegador y <b>navega como vos</b>: mueve el mouse, busca, compara, completa formularios. Los pasos aburridos de internet los hace él, paso a paso y con tu permiso.</div>
+      </div>
+      <div class="plato-precio">3 min<small>en notebook</small></div>
+    </div>
+  </section>
+
+  <!-- POSTRES -->
+  <section class="seccion">
+    <div class="seccion-cab"><div class="barra"></div><h2>Postres</h2><span class="pasaje">para llevarte el sabor · sin tiempo · solo</span><div class="barra"></div></div>
+
+    <div class="destacado">
+      <div>
+        <span class="escanear">★ para irte sabiendo</span>
+        <div class="plato-nombre">El Mapa de Claude <span class="tag" style="color:var(--acento);border-color:var(--acento)">15 herramientas</span></div>
+        <div class="plato-desc">Una vuelta completa por el ecosistema: chat, visión, archivos, artifacts, MCP, agentes, Claude Code, memoria, proyectos… <b>Cada herramienta con un ejemplo real</b> de tu vida.</div>
+      </div>
+      <div class="qrmini vacio" id="qr-mapa-min">QR<br>EL MAPA</div>
+    </div>
+
+    <div class="plato">
+      <div>
+        <div class="plato-nombre">Memoria y Proyectos <span class="tag" style="color:var(--verde);border-color:var(--verde)">Te conoce</span></div>
+        <div class="plato-desc">Para que cada conversación nueva no arranque de cero: <b>se acuerda de tu nombre, tu negocio y dónde quedaron</b>. Vos elegís qué recuerda y qué olvidar.</div>
+      </div>
+      <div class="plato-precio">cortesía<small>en claude.ai</small></div>
+    </div>
+  </section>
+
+  <footer class="pie">
+    <p class="firma">Si algo te dejó con ganas de más, <em>pedilo en la barra</em>: lo preparamos en vivo en la notebook del stand. Si no llegaste a probarlo todo, escaneá los códigos y <em>seguí degustando en tu casa</em>.</p>
+    <div class="casa-pie">Mientras el resto conversa · Claude construye</div>
+  </footer>
+</article>
+
+<!-- ============================================================
+     HOJAS 2 / 3 / 4 — CARTELES INDIVIDUALES
+     ============================================================ -->
+<section class="cartel">
+  <div class="casa">3ª Degustación Birria · Entrada</div>
+  <div class="plato-num">PLATO 01</div>
+  <h2>Ship It! <b>Arcade</b></h2>
+  <span class="tag-grande">90 segundos · un pulgar · tu celular</span>
+  <p class="desc-grande">Atrapás pedidos para construir la ciudad. Cada power-up es una <b>pieza real del ecosistema</b>. Al final, una receta a tu medida.</p>
+  <div class="qrbox-grande vacio" id="qr-ship-big">Pegá la URL de SHIP IT! en el panel ↑</div>
+  <p class="indic">Escaneá con tu cámara</p>
+  <p class="uso">Para arrancar por algo rápido, visual y que se siente juego de verdad.</p>
+  <div class="firma-cartel">Mientras el resto conversa · Claude construye</div>
 </section>
 
-<!-- ============ HOJAS 2/3/4: CARTELES INDIVIDUALES ============ -->
-<section class="cartel" id="c-ship">
-  <div class="num">01 — WOW</div>
-  <h2 style="color:var(--pink)">Jugá <span style="color:var(--text);font-style:normal">SHIP IT!</span></h2>
-  <span class="tag" style="color:var(--pink);border-color:rgba(255,110,193,.5)">90 segundos · un pulgar · tu celular</span>
-  <div class="desc">Arcade vertical: atrapás pedidos para construir la ciudad. Los power-ups son <b>piezas reales</b> del stack de Claude — al final ves cuáles te sirven.</div>
-  <div class="qrbox vacia" id="qr-ship-big">Pegá la URL de SHIP IT! en el panel ↑</div>
-  <div class="use">Escaneá con la cámara del celu y jugá ahí mismo. No necesitás instalar nada.</div>
-  <div class="ev">3° Degustación Birria · <b>Claude Fable 5</b></div>
+<section class="cartel">
+  <div class="casa">3ª Degustación Birria · Principal</div>
+  <div class="plato-num">PLATO 02</div>
+  <h2>Pedilo Bien <b>A tu medida</b></h2>
+  <span class="tag-grande">4 preguntas · 60 segundos · uso real</span>
+  <p class="desc-grande">Te llevás <b>tu pedido profesional</b> redactado por nosotros, con el stack que conviene a tu caso. Lo copiás o te lo mandás por WhatsApp.</p>
+  <div class="qrbox-grande vacio" id="qr-pedi-big">Pegá la URL de PEDILO BIEN en el panel ↑</div>
+  <p class="indic">Escaneá con tu cámara</p>
+  <p class="uso">Para quien tiene un negocio, un trabajo o un problema concreto que quiere resolver con IA.</p>
+  <div class="firma-cartel">Mientras el resto conversa · Claude construye</div>
 </section>
 
-<section class="cartel" id="c-pedi">
-  <div class="num">02 — UTILIDAD</div>
-  <h2 style="color:var(--cyan)">Pedí bien <span style="color:var(--text);font-style:normal">a Claude</span></h2>
-  <span class="tag" style="color:var(--cyan);border-color:rgba(95,217,255,.5)">4 preguntas · 60 segundos · uso real</span>
-  <div class="desc">Te llevás <b>tu pedido</b> redactado por nosotros: claro, con el stack que conviene a tu caso. Lo copiás o te lo mandás por WhatsApp.</div>
-  <div class="qrbox vacia" id="qr-pedi-big">Pegá la URL de PEDILO BIEN en el panel ↑</div>
-  <div class="use">Ideal si tenés un negocio, un trabajo o un problema concreto que querés resolver con IA.</div>
-  <div class="ev">3° Degustación Birria · <b>Claude Fable 5</b></div>
-</section>
-
-<section class="cartel" id="c-mapa">
-  <div class="num">03 — CONOCIMIENTO</div>
-  <h2 style="color:var(--green)">El mapa <span style="color:var(--text);font-style:normal">de Claude</span></h2>
-  <span class="tag" style="color:var(--green);border-color:rgba(108,240,168,.5)">15 herramientas · todas las edades</span>
-  <div class="desc">El 99% usa solo el chat. <b>Vos podés más:</b> visión, artifacts, MCP, agentes, Claude Code, skills, memoria… todas con un ejemplo real.</div>
-  <div class="qrbox vacia" id="qr-mapa-big">Pegá la URL del MAPA en el panel ↑</div>
-  <div class="use">Ideal para curiosos y para quien quiera <b>aprender a usar mejor</b> la IA que ya tiene a mano.</div>
-  <div class="ev">3° Degustación Birria · <b>Claude Fable 5</b></div>
+<section class="cartel">
+  <div class="casa">3ª Degustación Birria · Postre</div>
+  <div class="plato-num">PLATO 03</div>
+  <h2>El Mapa <b>de Claude</b></h2>
+  <span class="tag-grande">15 herramientas · todas las edades</span>
+  <p class="desc-grande">El 99% usa solo el chat. <b>Vos podés más:</b> visión, artifacts, MCP, agentes, Claude Code, skills, memoria… cada una con un ejemplo real.</p>
+  <div class="qrbox-grande vacio" id="qr-mapa-big">Pegá la URL del MAPA en el panel ↑</div>
+  <p class="indic">Escaneá con tu cámara</p>
+  <p class="uso">Para curiosos y para quien quiera usar mejor la IA que ya tiene a mano.</p>
+  <div class="firma-cartel">Mientras el resto conversa · Claude construye</div>
 </section>
 
 <script>
 "use strict";
 const $=id=>document.getElementById(id);
 const CAMPOS=[
-  {input:'u-ship', dest:['qr-ship','qr-ship-big']},
-  {input:'u-pedi', dest:['qr-pedi','qr-pedi-big']},
-  {input:'u-mapa', dest:['qr-mapa','qr-mapa-big']},
+  {input:'u-ship', dest:['qr-ship-min','qr-ship-big']},
+  {input:'u-pedi', dest:['qr-pedi-min','qr-pedi-big']},
+  {input:'u-mapa', dest:['qr-mapa-min','qr-mapa-big']},
 ];
 function pinta(url,id){
   const box=$(id);if(!box)return;
+  if(!box.dataset.ph)box.dataset.ph=box.innerHTML;
   if(!url||!/^https?:\/\//i.test(url)){
-    box.className='qrbox vacia';
-    box.innerHTML=box.dataset.placeholder||box.textContent;
+    box.classList.add('vacio');
+    box.innerHTML=box.dataset.ph;
     return;
   }
-  if(!box.dataset.placeholder)box.dataset.placeholder=box.textContent;
-  box.className='qrbox';
-  /* qrserver es estable y gratuita; tamaño grande para imprimir nítido */
-  const sz=id.endsWith('-big')?600:400;
+  box.classList.remove('vacio');
+  const sz=id.endsWith('-big')?600:220;
   box.innerHTML='<img alt="QR" src="https://api.qrserver.com/v1/create-qr-code/?size='+sz+'x'+sz+'&margin=0&data='+encodeURIComponent(url)+'">';
 }
 function actualizar(){
@@ -226,7 +348,7 @@ function actualizar(){
 }
 CAMPOS.forEach(c=>$(c.input).addEventListener('input',actualizar));
 
-/* persistencia simple */
+/* persistencia */
 const K='birria-qr-urls-v1';
 $('b-guardar').onclick=()=>{
   const o={};CAMPOS.forEach(c=>o[c.input]=$(c.input).value);
