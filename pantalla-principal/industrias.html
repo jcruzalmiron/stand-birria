@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Claude en tu industria · 3° Degustación Birria</title>
+<style>
+  *{margin:0;padding:0;box-sizing:border-box}
+  html,body{height:100%;background:#0A0A0A;font-family:system-ui,-apple-system,sans-serif;overflow:hidden}
+  body{display:flex;align-items:center;justify-content:center}
+  .card{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4vh;padding:6vw;text-align:center;opacity:0;transform:scale(.96);transition:opacity .8s,transform .8s;pointer-events:none}
+  .card.on{opacity:1;transform:scale(1)}
+  .icono{font-size:clamp(70px,14vh,140px)}
+  .industria{font-size:clamp(26px,4vh,44px);font-weight:800;text-transform:uppercase;letter-spacing:6px}
+  .caso{font-size:clamp(28px,5.5vh,58px);font-weight:700;line-height:1.3;max-width:18em;color:#fff}
+  .caso b{color:inherit}
+  .pie{position:fixed;bottom:26px;width:100%;text-align:center;font-size:clamp(13px,1.8vh,18px);color:#555;letter-spacing:1px;z-index:10}
+  .pie b{color:#9d82e8}
+  .dots{position:fixed;top:30px;width:100%;display:flex;justify-content:center;gap:10px;z-index:10}
+  .dot{width:10px;height:10px;border-radius:50%;background:#2a2a2a;transition:.4s}
+  .dot.on{background:#9d82e8;transform:scale(1.3)}
+  .barra{position:fixed;top:0;left:0;height:4px;background:#9d82e8;width:0%;z-index:10}
+  @keyframes carga{from{width:0}to{width:100%}}
+</style>
+</head>
+<body>
+<div class="barra" id="barra"></div>
+<div class="dots" id="dots"></div>
+<div id="cards"></div>
+<div class="pie">3° Degustación Birria · <b>Claude Fable 5</b> · pasá por el stand y pedí tu demo</div>
+
+<script>
+const TARJETAS=[
+  {i:'🩺',ind:'Salud',col:'#5ec8f2',caso:'Un consultorio le pidió a Claude su sistema de turnos y recordatorios. Lo tuvo esa misma tarde.'},
+  {i:'🍳',ind:'Gastronomía',col:'#ff9d4d',caso:'Claude arma el tablero de comandas, calcula los costos del menú y avisa cuando un plato deja de convenir.'},
+  {i:'🛍️',ind:'Comercio',col:'#7ee0a3',caso:'Control de stock con alertas, precios actualizados y el total del día. Sin planillas, sin contador de fiado.'},
+  {i:'📚',ind:'Educación',col:'#f4d35e',caso:'Una docente le pide a Claude un juego para repasar fracciones. Sus alumnos lo juegan al día siguiente.'},
+  {i:'🏠',ind:'Inmobiliaria',col:'#f4a8c0',caso:'Claude redacta las fichas de propiedades, compara precios de la zona y arma el tour de visitas de la semana.'},
+  {i:'🔧',ind:'Oficios',col:'#9d82e8',caso:'Un gasista le dicta los trabajos del día y Claude le devuelve presupuestos prolijos listos para mandar.'},
+];
+const INTERVALO=8000;
+const cards=document.getElementById('cards'), dots=document.getElementById('dots');
+TARJETAS.forEach((t,k)=>{
+  const c=document.createElement('div');c.className='card';
+  c.innerHTML='<div class="icono">'+t.i+'</div><div class="industria" style="color:'+t.col+'">'+t.ind+'</div><div class="caso">'+t.caso+'</div>';
+  cards.appendChild(c);
+  const d=document.createElement('div');d.className='dot';dots.appendChild(d);
+});
+let k=0;
+function mostrar(){
+  [...cards.children].forEach((c,i)=>c.classList.toggle('on',i===k));
+  [...dots.children].forEach((d,i)=>d.classList.toggle('on',i===k));
+  const b=document.getElementById('barra');
+  b.style.animation='none'; void b.offsetWidth;
+  b.style.animation='carga '+INTERVALO+'ms linear';
+  k=(k+1)%TARJETAS.length;
+}
+mostrar();
+setInterval(mostrar, INTERVALO);
+</script>
+</body>
+</html>

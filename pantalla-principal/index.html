@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mientras el resto conversa, Claude construye.</title>
+<style>
+  *{margin:0;padding:0;box-sizing:border-box}
+  html,body{height:100%;background:#0A0A0A;color:#eee;font-family:system-ui,-apple-system,sans-serif;overflow:hidden}
+  body{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6vh;cursor:none}
+  .frase{font-size:clamp(34px,5.2vw,76px);font-weight:800;text-align:center;line-height:1.2;max-width:90vw;letter-spacing:-1px}
+  .frase em{font-style:normal;background:linear-gradient(90deg,#9d82e8,#e87c5c);-webkit-background-clip:text;background-clip:text;color:transparent}
+  .term{width:min(880px,90vw);height:34vh;background:#0d0d12;border:1px solid #222230;border-radius:14px;overflow:hidden;box-shadow:0 20px 60px rgba(0,0,0,.6)}
+  .tbar{height:34px;background:#16161e;display:flex;align-items:center;gap:7px;padding:0 14px}
+  .dot{width:11px;height:11px;border-radius:50%}
+  .tbar span{margin-left:8px;font-size:12px;color:#666;font-family:ui-monospace,Consolas,monospace}
+  .tbody{padding:14px 18px;height:calc(100% - 34px);overflow:hidden;font-family:ui-monospace,Consolas,monospace;font-size:clamp(13px,1.4vw,17px);line-height:1.7}
+  .ln{white-space:pre-wrap;word-break:break-all}
+  .p{color:#7ee0a3}.cmd{color:#eee}.out{color:#777}.ok{color:#9d82e8}
+  .cursor{display:inline-block;width:9px;height:1.1em;background:#9d82e8;vertical-align:text-bottom;animation:bl 0.9s steps(1) infinite}
+  @keyframes bl{50%{opacity:0}}
+  .esquina{position:fixed;bottom:24px;right:30px;font-size:clamp(13px,1.3vw,17px);color:#555;letter-spacing:1px}
+  .esquina b{color:#9d82e8}
+</style>
+</head>
+<body>
+  <div class="frase">Mientras el resto conversa,<br><em>Claude construye.</em></div>
+  <div class="term">
+    <div class="tbar">
+      <div class="dot" style="background:#ff5f57"></div><div class="dot" style="background:#febc2e"></div><div class="dot" style="background:#28c840"></div>
+      <span>claude — stand birria</span>
+    </div>
+    <div class="tbody" id="tb"></div>
+  </div>
+  <div class="esquina">3° Degustación Birria · <b>Claude Fable 5</b></div>
+
+<script>
+const GUION=[
+  ['$ claude "armame un juego RPG con tres héroes y un jefe final"','Analizando el pedido...','Generando arena-rpg/index.html (1 archivo, 0 dependencias)','✔ Listo en 41s — abrilo con doble clic'],
+  ['$ claude "necesito una agenda de turnos para mi peluquería"','Diseñando calendario semanal + lista de clientes...','Creando turnos-peluqueria.html · dark mode · mobile-first','✔ App lista — sin instalar nada'],
+  ['$ claude "un tablero de comandas para la parrilla"','Pendiente → En cocina → Listo','Generando pedidos-restaurante.html con alertas de demora','✔ Tablero funcionando'],
+  ['$ claude "control de stock para el kiosco, con alertas"','Detectando productos por agotarse...','Creando stock-kiosco.html · registro de venta en un toque','✔ Stock bajo control'],
+  ['$ claude "dividí los gastos del asado entre los cuatro"','Calculando transferencias mínimas...','Juan → Flor $8.250 · Tomi → Meli $4.100','✔ Todos a mano en 2 transferencias'],
+  ['$ claude "animá las estrellas del fondo y agregale sonido"','Sintetizando audio con osciladores WebAudio...','Sin archivos de sonido, sin internet, todo generado','✔ Hecho — pasá por el stand y pedí el tuyo'],
+];
+const tb=document.getElementById('tb');
+let bloque=0;
+const sleep=ms=>new Promise(r=>setTimeout(r,ms));
+function linea(cls){const d=document.createElement('div');d.className='ln '+cls;tb.appendChild(d);
+  while(tb.children.length>10)tb.removeChild(tb.firstChild);return d;}
+async function tipear(el,txt,vel){
+  const c=document.createElement('span');c.className='cursor';el.appendChild(c);
+  for(const ch of txt){c.insertAdjacentText('beforebegin',ch);await sleep(vel+Math.random()*30);}
+  c.remove();
+}
+async function run(){
+  for(;;){
+    const [cmd,...outs]=GUION[bloque%GUION.length];
+    const l=linea('cmd');
+    const pr=document.createElement('span');pr.className='p';pr.textContent='';l.appendChild(pr);
+    await tipear(l,cmd,34);
+    await sleep(500);
+    for(const o of outs){
+      const lo=linea(o.startsWith('✔')?'ok':'out');lo.textContent=o;
+      await sleep(700+Math.random()*500);
+    }
+    linea('out').textContent=' ';
+    await sleep(2200);
+    bloque++;
+  }
+}
+run();
+</script>
+</body>
+</html>
